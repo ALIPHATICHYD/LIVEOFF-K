@@ -23,7 +23,7 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
   const staffView = profile.role === "admin";
 
   return (
-    <div className="mx-auto flex min-h-[calc(100vh-8rem)] max-w-2xl flex-col lg:min-h-screen">
+    <div className="mx-auto flex min-h-[calc(100dvh-8rem)] max-w-2xl flex-col lg:min-h-dvh">
       <header className="flex items-center gap-3 border-b border-line bg-white px-5 py-4">
         <Link href={staffView ? "/admin" : "/support"} aria-label="Back" className="flex size-10 items-center justify-center rounded-full hover:bg-sand"><Icon name="back" /></Link>
         <div className="min-w-0 flex-1">

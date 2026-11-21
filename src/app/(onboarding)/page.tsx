@@ -67,7 +67,7 @@ async function LiveTicker() {
 
 export default function Welcome() {
   return (
-    <div className="relative flex min-h-screen flex-col overflow-hidden bg-brand text-white">
+    <div className="relative flex min-h-dvh flex-col overflow-hidden bg-brand text-white">
       <Scenery />
       <Keke />
       <header className="relative z-[1] flex items-center justify-between px-5 py-5 lg:px-12">
@@ -77,7 +77,7 @@ export default function Welcome() {
           <Link href="/login" className="btn bg-amber text-ink">Log in</Link>
         </div>
       </header>
-      <div className="lk-in relative z-[1] flex flex-1 flex-col gap-8 px-5 pb-[140px] pt-6 lg:flex-row lg:items-center lg:justify-center lg:gap-16 lg:px-12 lg:pb-[230px]">
+      <div className="lk-in relative z-[1] flex flex-1 flex-col justify-center gap-8 px-5 pb-[140px] pt-2 lg:flex-row lg:items-center lg:justify-center lg:gap-16 lg:px-12 lg:pb-[230px]">
         <div className="flex max-w-md flex-col gap-4">
           <p className="text-sm text-[#cfe3d7]">Step 1 of 2</p>
           <h1 className="font-display text-4xl font-bold leading-[1.05] lg:text-[52px]">Where do you study?</h1>

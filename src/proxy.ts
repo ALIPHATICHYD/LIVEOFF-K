@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { isSupabaseConfigured, supabaseKey, supabaseUrl } from "@/lib/supabase/config";
 
-const PROTECTED = ["/upload", "/admin", "/account"];
+const PROTECTED = ["/upload", "/admin", "/saved", "/payments"];
 
 /** Refreshes the Supabase session cookie on every request and guards signed-in areas. */
 export async function proxy(request: NextRequest) {

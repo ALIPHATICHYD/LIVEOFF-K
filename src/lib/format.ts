@@ -34,3 +34,23 @@ export const STATUS_LABEL: Record<string, string> = {
   draft: "Draft", pending_review: "Waiting for review", inspection_scheduled: "Inspection scheduled",
   verified: "Live (verified)", rejected: "Needs changes", suspended: "Suspended", let: "Let",
 };
+
+export const PAYMENT_STATUS: Record<string, { label: string; tone: "amber" | "green" | "red" | "grey" }> = {
+  pending: { label: "Not paid yet", tone: "grey" },
+  held: { label: "Held safely in escrow", tone: "amber" },
+  moved_in: { label: "Held: confirm within 48 hours", tone: "amber" },
+  release_approved: { label: "Releasing to landlord", tone: "green" },
+  released: { label: "Released to landlord", tone: "green" },
+  disputed: { label: "On hold: dispute open", tone: "red" },
+  refunded: { label: "Refunded", tone: "grey" },
+  failed: { label: "Payment failed", tone: "red" },
+  cancelled: { label: "Cancelled", tone: "grey" },
+};
+
+/** Colour for a room card when there is no photo yet, stable per area. */
+const TINTS = ["#2F7D5B", "#C9852B", "#3C6E91", "#8A5A9E", "#B5523B", "#4F6B3A"];
+export function areaTint(key: string) {
+  let h = 0;
+  for (const c of key) h = (h * 31 + c.charCodeAt(0)) >>> 0;
+  return TINTS[h % TINTS.length];
+}

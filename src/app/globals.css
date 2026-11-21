@@ -35,3 +35,13 @@ body {
 @utility card {
   @apply rounded-2xl border border-line bg-white;
 }
+
+@keyframes lk-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes lk-pop { 0% { transform: scale(0.6); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
+@keyframes lk-pulse-kf { 0% { box-shadow: 0 0 0 0 rgba(242, 169, 0, 0.55); } 100% { box-shadow: 0 0 0 16px rgba(242, 169, 0, 0); } }
+.lk-in { animation: lk-up 0.35s ease both; }
+.lk-pop { animation: lk-pop 0.3s ease; }
+.lk-pulse { animation: lk-pulse-kf 1.6s ease-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .lk-in, .lk-pop, .lk-pulse { animation: none; }
+}

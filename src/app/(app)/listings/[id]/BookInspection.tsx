@@ -1,10 +1,14 @@
 "use client";
 
-import { useActionState } from "react";
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect } from "react";
 import { bookInspection, type BookState } from "./actions";
 
 export function BookInspection({ listingId }: { listingId: string }) {
+  const router = useRouter();
   const [state, action, pending] = useActionState<BookState, FormData>(bookInspection, {});
+  // show the pay step once the inspection is booked
+  useEffect(() => { if (state.ok) router.refresh(); }, [state.ok, router]);
   if (state.ok) {
     return (
       <p className="rounded-[10px] bg-mint p-3 text-sm text-brand">

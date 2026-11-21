@@ -27,6 +27,10 @@ export type PublicListing = {
   area_slug: string;
   university_slug: string;
   university_name: string;
+  area_minutes: number | null;
 };
 
-export type Area = { id: string; slug: string; name: string; university_id: string };
+export type Area = {
+  id: string; slug: string; name: string; university_id: string;
+  minutes_to_campus?: number | null; map_x?: number | null; map_y?: number | null;
+};

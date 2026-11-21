@@ -11,15 +11,16 @@ Find. Rent. Live. Better. Verified student housing, piloting at the University o
 | Logins | Supabase Auth, phone OTP | Students and landlords sign in with a text code. Roles: student, landlord, agent, admin. |
 | Images | Supabase Storage | Photos are resized to WebP (max 1600px) in the browser before upload. Ownership documents go to a private bucket. |
 | Search | Postgres full-text search | Enough for the pilot. Move to Meilisearch/Typesense past ~10 campuses. |
-| Payments | Not built yet | Paystack or Flutterwave. No holding of funds or escrow until legal sign-off. |
+| Payments | Paystack + escrow tables in Postgres | Students pay into LiveOff-K escrow; staff release to the landlord after move-in. Run this through a licensed escrow/payment partner with legal sign-off before going live. |
 
 ## Run it locally
 
 1. Create a Supabase project (free tier is fine).
-2. In the Supabase SQL editor, run `supabase/migrations/20261121000000_init.sql`, then `supabase/seed.sql`.
+2. In the Supabase SQL editor, run every file in `supabase/migrations/` in name order, then `supabase/seed.sql`.
    With the Supabase CLI you can instead run `npx supabase link` and `npx supabase db push`.
 3. In Supabase, go to Authentication -> Sign In / Providers -> Phone, and enable it with an SMS provider (Twilio, MessageBird, Vonage or Textlocal; Termii needs a custom SMS hook). For testing, add a test phone number and fixed code there.
-4. `cp .env.example .env.local` and fill in the project URL and publishable key (Project Settings -> API).
+4. `cp .env.example .env.local` and fill in the values (Supabase: Project Settings -> API; Paystack: Settings -> API Keys & Webhooks). On Vercel, add the same values under Project -> Settings -> Environment Variables.
+   In Paystack, set the webhook URL to `https://<your-site>/api/paystack/webhook`.
 5. `npm install` then `npm run dev`, and open http://localhost:3000.
 
 To make yourself an admin, sign in once, then run in the SQL editor:
@@ -29,6 +30,11 @@ update public.profiles set role = 'admin' where phone = '234XXXXXXXXXX';
 ```
 
 ## How the main flows work
+
+- **Onboarding**: `/` asks for the university, `/start/[uni]` shows its nearby areas on a mini map plus a budget. The choice is kept in a cookie, so it works before login.
+- **Escrow**: after booking an inspection, the student pays into escrow (Paystack). Status goes `held` -> `moved_in` (48 hours to report a problem) -> `release_approved` -> `released` once staff record the payout. The student can open a dispute at any point before release, which freezes the money and opens a support chat. Amounts always come from the database, and a payment is only marked paid after Paystack confirms the exact amount (webhook or return-page verification).
+- **Support**: `/support` has instant answers to common questions and a chat with staff. Staff reply from `/admin`.
+
 
 - **Students** browse `/listings` (verified listings only, through the `listings_public` view, which hides the address), open a listing and book a free inspection.
 - **Landlords and agents** sign up choosing their account type, add a listing at `/upload`, upload photos and proof of authority, then request review. Listings start as drafts.
@@ -46,7 +52,9 @@ All rules live in the database (row-level security and triggers), not only in th
 ## Project layout
 
 ```
-src/app/            pages: home, listings, listings/[id], login, upload, upload/[id], admin
+src/app/(onboarding) welcome (pick university) and start/[uni] (areas + budget)
+src/app/(app)        rooms, room page, saved, payments, support, login, upload, admin
+src/app/api          Paystack webhook
 src/components/     header, footer, logo, listing card
 src/lib/            supabase clients, auth helpers, formatting, image compression
 src/proxy.ts        refreshes the session cookie and guards /upload and /admin
@@ -55,7 +63,7 @@ supabase/           SQL migration and seed data
 
 ## Next steps
 
-- Payments (Paystack/Flutterwave) and the revenue, refund and completed-rental numbers in the admin dashboard.
+- Automatic payouts to landlords (Paystack Transfers) instead of staff recording them.
 - Report-a-listing form (the `complaints` table and admin view already exist).
 - Online tenant application and agreement (plan section 7.3).
 - Email (Resend) and WhatsApp/SMS inspection reminders.

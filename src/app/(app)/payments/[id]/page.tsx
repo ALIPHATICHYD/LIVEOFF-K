@@ -1,0 +1,126 @@
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { Suspense } from "react";
+import { Icon } from "@/components/Icons";
+import { PageLoading } from "@/components/PageLoading";
+import { SetupNotice } from "@/components/SetupNotice";
+import { requireRole } from "@/lib/auth";
+import { PAYMENT_STATUS, formatNaira } from "@/lib/format";
+import { isPaystackConfigured, markPaidIfValid, verifyTransaction } from "@/lib/paystack";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
+import { createClient } from "@/lib/supabase/server";
+import { approveRelease, confirmMovedIn, openDispute } from "../actions";
+
+type Props = { params: Promise<{ id: string }>; searchParams: Promise<Record<string, string | undefined>> };
+
+const STEPS = [
+  { key: "held", title: "Paid into escrow", sub: "LiveOff-K holds your money, not the landlord" },
+  { key: "moved_in", title: "Moved in", sub: "You have 48 hours to report a problem" },
+  { key: "release_approved", title: "You confirmed", sub: "We pay the landlord" },
+  { key: "released", title: "Released to landlord", sub: "All done. Enjoy your new room" },
+];
+const ORDER = ["pending", "held", "moved_in", "release_approved", "released"];
+
+async function Content({ params, searchParams }: Props) {
+  if (!isSupabaseConfigured) return <SetupNotice />;
+  const [{ id }, sp] = await Promise.all([params, searchParams]);
+  if (!/^[0-9a-f-]{36}$/i.test(id)) notFound();
+  const profile = await requireRole(["student", "landlord", "agent", "admin"], `/payments/${id}`);
+  const supabase = await createClient();
+  const load = () => supabase.from("payments")
+    .select("*, listings(title, area_id)").eq("id", id).maybeSingle();
+  let { data: p } = await load();
+  if (!p) notFound();
+
+  // Returning from Paystack: confirm with Paystack directly (never trust the URL alone).
+  const ref = sp.reference ?? sp.trxref;
+  if (p.status === "pending" && ref === p.reference && isPaystackConfigured()) {
+    const result = await verifyTransaction(p.reference);
+    if (result && (await markPaidIfValid(p.reference, result))) ({ data: p } = await load());
+  }
+  if (!p) notFound();
+
+  const isStudent = p.student_id === profile.id;
+  const s = PAYMENT_STATUS[p.status] ?? PAYMENT_STATUS.pending;
+  const idx = ORDER.indexOf(p.status);
+  const title = (p.listings as { title: string } | null)?.title ?? "Room";
+  const due = p.release_due_at ? new Date(p.release_due_at).toLocaleString("en-NG", { dateStyle: "medium", timeStyle: "short", timeZone: "Africa/Lagos" }) : null;
+
+  return (
+    <div className="mx-auto flex max-w-xl flex-col gap-4 px-5 py-6 lg:py-10">
+      <Link href="/payments" className="text-sm font-semibold text-brand">← All payments</Link>
+      <h1 className="font-display text-3xl font-bold">Your payment</h1>
+
+      <section className="relative overflow-hidden rounded-[20px] bg-brand p-5 text-white">
+        <p className="text-[13px] text-[#cfe3d7]">{title}</p>
+        <p className="mt-1 font-display text-[32px] font-bold">{formatNaira(Number(p.total_kobo))}</p>
+        <span className={`mt-2 inline-block rounded-full px-2.5 py-1 text-xs font-bold text-ink ${p.status === "released" ? "bg-mint" : p.status === "disputed" ? "bg-[#fdecec] text-[#a1281a]" : "bg-amber"}`}>{s.label}</span>
+        <Icon name="shield" size={150} strokeWidth={1} className="absolute -bottom-10 -right-8 opacity-10" />
+      </section>
+
+      {sp.setup && (
+        <p className="rounded-xl bg-[#fff3d1] p-3 text-sm text-[#6b4a00]">Online payments aren&apos;t switched on yet. Add the Paystack keys to the site settings (see the README).</p>
+      )}
+      {sp.error && <p role="alert" className="rounded-xl bg-[#fdecec] p-3 text-sm text-[#a1281a]">That didn&apos;t work. Try again or message support.</p>}
+
+      {p.status === "disputed" || p.status === "refunded" ? (
+        <section className="card p-5">
+          <p className="font-bold">{p.status === "disputed" ? "Your money is on hold while we sort this out." : "This payment was refunded."}</p>
+          {p.dispute_reason && <p className="mt-1 text-sm text-muted">“{p.dispute_reason}”</p>}
+          <Link href="/support" className="btn-primary mt-3 h-11">Go to support</Link>
+        </section>
+      ) : (
+        <section className="card flex flex-col p-5">
+          {STEPS.map((step, k) => {
+            const n = k + 1;
+            const done = idx >= n;
+            const now = !done && idx === k; // the next step to happen
+            return (
+              <div key={step.key} className="flex gap-3.5">
+                <div className="flex flex-col items-center">
+                  <span className={`flex size-7 items-center justify-center rounded-full border-2 text-[13px] font-bold ${done ? "border-brand bg-brand text-white" : now ? "lk-pulse border-amber bg-amber text-ink" : "border-field bg-white text-muted"}`}>
+                    {done ? <Icon name="check" size={14} strokeWidth={3} /> : n}
+                  </span>
+                  {n < STEPS.length && <span className={`min-h-6 w-0.5 flex-1 ${done ? "bg-brand" : "bg-[#e3e4da]"}`} />}
+                </div>
+                <div className="pb-4">
+                  <p className={`mt-0.5 font-bold ${done || now ? "text-ink" : "text-[#8a968f]"}`}>{step.title}</p>
+                  <p className="text-[13px] text-muted">{step.key === "moved_in" && due && p.status === "moved_in" ? `Report any problem before ${due}` : step.sub}</p>
+                </div>
+              </div>
+            );
+          })}
+        </section>
+      )}
+
+      {isStudent && p.status === "pending" && (
+        <Link href={`/listings/${p.listing_id}`} className="btn-primary h-13 rounded-[14px] text-base">Finish paying</Link>
+      )}
+      {isStudent && p.status === "held" && (
+        <form action={confirmMovedIn}><input type="hidden" name="paymentId" value={p.id} />
+          <button className="btn-primary h-13 w-full rounded-[14px] text-base">I&apos;ve moved in</button></form>
+      )}
+      {isStudent && p.status === "moved_in" && (
+        <form action={approveRelease}><input type="hidden" name="paymentId" value={p.id} />
+          <button className="btn-primary h-13 w-full rounded-[14px] text-base">Everything is fine, release payment</button></form>
+      )}
+      {isStudent && ["held", "moved_in"].includes(p.status) && (
+        <details className="card p-4">
+          <summary className="cursor-pointer list-none font-bold text-[#a1281a]">Something&apos;s wrong? Hold payment and open a dispute</summary>
+          <form action={openDispute} className="mt-3 flex flex-col gap-3">
+            <input type="hidden" name="paymentId" value={p.id} />
+            <label className="flex flex-col gap-1.5 text-sm font-semibold">What happened?
+              <textarea name="reason" required rows={3} maxLength={1000} className="rounded-[10px] border border-field p-3 font-medium" placeholder="e.g. The room has no water and the landlord isn't responding" />
+            </label>
+            <button className="btn h-11 border border-[#e5b4ac] bg-white text-[#a1281a]">Hold my money and talk to support</button>
+          </form>
+        </details>
+      )}
+      <p className="text-center text-xs text-muted">Escrow held by [licensed escrow partner]. Reference {p.reference}</p>
+    </div>
+  );
+}
+
+export default function PaymentPage(props: Props) {
+  return <Suspense fallback={<PageLoading />}><Content {...props} /></Suspense>;
+}

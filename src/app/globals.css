@@ -45,3 +45,24 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .lk-in, .lk-pop, .lk-pulse { animation: none; }
 }
+
+/* Welcome scenery */
+@keyframes lk-tw { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+@keyframes lk-float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-14px) rotate(6deg); } }
+@keyframes lk-drive { from { left: -90px; } to { left: calc(100% + 20px); } }
+@keyframes lk-dash { to { stroke-dashoffset: -140; } }
+@keyframes lk-tick { 0%, 27% { transform: translateY(0); } 33%, 60% { transform: translateY(-22px); } 66%, 93% { transform: translateY(-44px); } 100% { transform: translateY(-66px); } }
+@keyframes lk-sun { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+@keyframes lk-ping { from { r: 6; opacity: 1; } to { r: 22; opacity: 0; } }
+.lk-tw { animation: lk-tw 3s ease-in-out infinite; }
+.lk-float { animation: lk-float 6s ease-in-out infinite; }
+.lk-sun { animation: lk-sun 7s ease-in-out infinite; }
+.lk-route { animation: lk-dash 4s linear infinite; }
+.lk-ping { animation: lk-ping 1.6s ease-out infinite; }
+.lk-keke { left: -90px; animation: lk-drive 16s linear infinite; }
+.lk-keke:hover, .lk-keke:focus-visible { animation-play-state: paused; }
+.lk-ticker { animation: lk-tick 9s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .lk-tw, .lk-float, .lk-sun, .lk-route, .lk-ping, .lk-keke, .lk-ticker { animation: none; }
+  .lk-keke { left: 20%; }
+}

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SkyBand } from "@/components/welcome/SkyBand";
 import { Suspense } from "react";
 import { PageLoading } from "@/components/PageLoading";
 import { getProfile } from "@/lib/auth";
@@ -23,13 +24,14 @@ async function Content({ searchParams }: { searchParams: Promise<{ listing?: str
   }
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-5 px-5 py-6 lg:py-10">
-      <div className="flex items-center gap-3">
-        <span className="relative flex size-12 items-center justify-center rounded-full bg-brand font-display font-bold text-white">
-          LK<span className="absolute bottom-0 right-0 size-3 rounded-full border-2 border-white bg-[#3bc47a]" />
+      <div className="relative flex items-center gap-3 overflow-hidden rounded-[20px] bg-brand p-5 pb-14 text-white">
+        <SkyBand className="h-12" opacity="opacity-50" />
+        <span className="relative flex size-12 flex-none items-center justify-center rounded-full bg-amber font-display font-bold text-ink">
+          LK<span className="absolute bottom-0 right-0 size-3 rounded-full border-2 border-brand bg-[#3bc47a]" />
         </span>
-        <div>
+        <div className="relative">
           <h1 className="font-display text-2xl font-bold">LiveOff-K Support</h1>
-          <p className="text-sm text-muted">Real people. We reply as fast as we can.</p>
+          <p className="text-sm text-[#cfe3d7]">Real people. We reply as fast as we can, and we hold your rent until you&apos;re happy.</p>
         </div>
       </div>
 

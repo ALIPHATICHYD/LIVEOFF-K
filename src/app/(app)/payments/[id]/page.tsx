@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SkyBand } from "@/components/welcome/SkyBand";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Icon } from "@/components/Icons";
@@ -51,10 +52,11 @@ async function Content({ params, searchParams }: Props) {
       <Link href="/payments" className="text-sm font-semibold text-brand">← All payments</Link>
       <h1 className="font-display text-3xl font-bold">Your payment</h1>
 
-      <section className="relative overflow-hidden rounded-[20px] bg-brand p-5 text-white">
-        <p className="text-[13px] text-[#cfe3d7]">{title}</p>
+      <section className="relative overflow-hidden rounded-[20px] bg-brand p-5 pb-12 text-white">
+        <SkyBand className="h-12" opacity="opacity-50" />
+        <div className="relative"><p className="text-[13px] text-[#cfe3d7]">{title}</p>
         <p className="mt-1 font-display text-[32px] font-bold">{formatNaira(Number(p.total_kobo))}</p>
-        <span className={`mt-2 inline-block rounded-full px-2.5 py-1 text-xs font-bold text-ink ${p.status === "released" ? "bg-mint" : p.status === "disputed" ? "bg-[#fdecec] text-[#a1281a]" : "bg-amber"}`}>{s.label}</span>
+        <span className={`mt-2 inline-block rounded-full px-2.5 py-1 text-xs font-bold text-ink ${p.status === "released" ? "bg-mint" : p.status === "disputed" ? "bg-[#fdecec] text-[#a1281a]" : "bg-amber"}`}>{s.label}</span></div>
         <Icon name="shield" size={150} strokeWidth={1} className="absolute -bottom-10 -right-8 opacity-10" />
       </section>
 

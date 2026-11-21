@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Skyline } from "@/components/welcome/Scenery";
 import { useMemo, useState } from "react";
 import { savePrefs } from "../../actions";
 
@@ -37,6 +38,13 @@ export function AreaPicker({ uni, uniName, areas, rents, budgets, initial }: {
           <path d="M175 135 L 120 280" stroke="#fff" strokeWidth="7" fill="none" />
           <path d="M175 135 L 330 230" stroke="#fff" strokeWidth="6" fill="none" />
         </svg>
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="pointer-events-none absolute inset-0 size-full" aria-hidden="true">
+          {areas.filter((a) => picked.includes(a.slug)).map((a) => (
+            <line key={a.slug} x1={a.x + 6} y1={a.y + 5} x2={50} y2={50} stroke="#F2A900" strokeWidth="3" strokeLinecap="round"
+              strokeDasharray="1 7" vectorEffect="non-scaling-stroke" className="lk-route" />
+          ))}
+        </svg>
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-14 opacity-30"><Skyline /></div>
         <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1">
           <span className="lk-pulse flex size-11 items-center justify-center rounded-full bg-amber text-ink">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" aria-hidden="true"><path d="M3 9l9-5 9 5-9 5z" /><path d="M7 11v5c3 2 7 2 10 0v-5" /></svg>
@@ -49,6 +57,7 @@ export function AreaPicker({ uni, uniName, areas, rents, budgets, initial }: {
             <button key={a.slug} type="button" onClick={() => toggle(a.slug)} aria-pressed={on}
               style={{ left: `${a.x}%`, top: `${a.y}%` }}
               className={`absolute rounded-full border-2 px-3 py-1.5 text-[13px] font-bold shadow-[0_4px_12px_rgba(15,31,23,0.12)] transition-all ${on ? "border-brand bg-brand text-white" : "border-white bg-white text-ink hover:border-brand"}`}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" aria-hidden="true" className="-mt-0.5 mr-1 inline"><path d="M3 11l9-7 9 7v9h-6v-6H9v6H3z" /></svg>
               {a.name}{a.minutes != null && <span className="ml-1 font-medium opacity-80">{a.minutes} min</span>}
             </button>
           );

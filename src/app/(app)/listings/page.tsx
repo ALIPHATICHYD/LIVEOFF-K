@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { SkyBand } from "@/components/welcome/SkyBand";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Icon } from "@/components/Icons";
@@ -62,8 +63,9 @@ async function Feed({ searchParams }: { searchParams: Promise<Search> }) {
 
   return (
     <div>
-      <section className="rounded-b-[28px] bg-brand px-5 pb-6 pt-5 text-white lg:px-10 lg:pb-8 lg:pt-8">
-        <div className="mx-auto flex max-w-6xl flex-col gap-3.5">
+      <section className="relative overflow-hidden rounded-b-[28px] bg-brand px-5 pb-14 pt-5 text-white lg:px-10 lg:pb-20 lg:pt-8">
+        <SkyBand />
+        <div className="relative mx-auto flex max-w-6xl flex-col gap-3.5">
           <Link href={`/start/${uni}`} className="flex items-center gap-1.5 self-start rounded-full bg-white/10 px-3 py-2 text-[13px] font-semibold hover:bg-white/15">
             <Icon name="pin" size={14} className="text-amber" />
             {university.short_name ?? university.name} · {myAreas.length ? `${myAreas.length} area${myAreas.length === 1 ? "" : "s"}` : "all areas"} · change

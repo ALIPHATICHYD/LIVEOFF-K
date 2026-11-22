@@ -31,7 +31,7 @@ export function Skyline() {
         <rect x="1196" y="96" width="14" height="66" />
         <path d="M1072 98 Q1145 50 1218 98 L1218 108 Q1145 64 1072 108Z" />
       </g>
-      <text x="1145" y="90" textAnchor="middle" fontFamily="var(--font-grotesk), sans-serif" fontWeight="700" fontSize="13" fill="#CFE3D7" opacity="0.8">UNIABUJA</text>
+      <text x="1145" y="90" textAnchor="middle" fontFamily="var(--font-display-face), sans-serif" fontWeight="700" fontSize="13" fill="#CFE3D7" opacity="0.8">UNIABUJA</text>
       <path className="lk-route" d="M290 140 C420 118 620 150 800 132 S1040 120 1145 150" fill="none" stroke="#F2A900" strokeWidth="3" strokeLinecap="round" strokeDasharray="2 12" />
       <circle cx="1145" cy="150" r="6" fill="#F2A900" />
       <circle cx="1145" cy="150" r="6" fill="none" stroke="#F2A900" strokeWidth="2" className="lk-ping" />

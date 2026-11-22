@@ -55,3 +55,7 @@ export function areaTint(key: string) {
   for (const c of key) h = (h * 31 + c.charCodeAt(0)) >>> 0;
   return TINTS[h % TINTS.length];
 }
+
+/** The database rate limit (see the launch_hardening migration) raises SQLSTATE P0429. */
+export const RATE_LIMITED = "You're doing that a lot. Wait a few minutes and try again.";
+export const isRateLimited = (error: { code?: string } | null | undefined) => error?.code === "P0429";

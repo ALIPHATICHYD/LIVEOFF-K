@@ -6,7 +6,7 @@ import { MarketSaveButton } from "./MarketSaveButton";
 
 export function MarketCard({ item, saved }: { item: MarketItem; saved: boolean }) {
   return (
-    <Link href={`/market/${item.id}`} className="lk-lift group relative flex flex-col overflow-hidden rounded-2xl border border-line bg-white text-ink">
+    <Link href={`/market/${item.id}`} className="lk-in lk-lift group relative flex flex-col overflow-hidden rounded-2xl border border-line bg-white text-ink">
       <ItemThumb category={item.category} cover={item.cover_path} title={item.title} className="aspect-[4/3]" />
       <MarketSaveButton itemId={item.id} saved={saved} className="absolute right-2 top-2" />
       {item.status === "reserved" && <span className="absolute left-2 top-2 rounded-full bg-ink px-2 py-1 text-[11px] font-bold text-white">Reserved</span>}

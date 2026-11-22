@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getProfile } from "@/lib/auth";
-import { FACILITIES, PROPERTY_TYPES, nairaToKobo } from "@/lib/format";
+import { FACILITIES, PROPERTY_TYPES, nairaToKobo, RATE_LIMITED, isRateLimited } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 
 export type FormState = { error?: string };
@@ -20,6 +20,7 @@ const schema = z.object({
   agentFee: naira, cautionFee: naira, otherFees: naira,
   otherFeesNote: z.string().trim().max(120).optional(),
   minMonths: z.coerce.number().int().min(1).max(36),
+  spaces: z.coerce.number().int().min(1, "At least 1 student").max(200),
   availableFrom: z.string().optional(),
   minutesToGate: z.coerce.number().int().min(0).max(180).optional(),
   address: z.string().trim().min(5, "Enter the full address").max(300),
@@ -38,6 +39,7 @@ export async function createListing(_prev: FormState, form: FormData): Promise<F
     areaId: form.get("areaId"),
     propertyType: form.get("propertyType"),
     bedrooms: form.get("bedrooms"),
+    spaces: form.get("spaces") || 1,
     furnished: form.get("furnished") === "on",
     rent: digits(form.get("rent")),
     agentFee: digits(form.get("agentFee")),
@@ -73,11 +75,13 @@ export async function createListing(_prev: FormState, form: FormData): Promise<F
     other_fees_kobo: nairaToKobo(d.otherFees),
     other_fees_note: d.otherFeesNote ?? null,
     min_rental_months: d.minMonths,
+    spaces: d.spaces,
     available_from: d.availableFrom ?? null,
     minutes_to_gate: d.minutesToGate ?? null,
     address: d.address,
     facilities: d.facilities,
   }).select("id").single();
+  if (isRateLimited(error)) return { error: RATE_LIMITED };
   if (error || !data) return { error: "Could not save the listing. Try again." };
   redirect(`/upload/${data.id}`);
 }

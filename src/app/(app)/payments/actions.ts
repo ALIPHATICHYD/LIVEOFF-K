@@ -10,23 +10,26 @@ const id = z.string().uuid();
 export async function confirmMovedIn(form: FormData) {
   const pid = id.parse(form.get("paymentId"));
   const supabase = await createClient();
-  await supabase.rpc("confirm_moved_in", { p_payment: pid });
+  const { error } = await supabase.rpc("confirm_moved_in", { p_payment: pid });
   revalidatePath(`/payments/${pid}`);
+  if (error) redirect(`/payments/${pid}?error=1`);
 }
 
 export async function approveRelease(form: FormData) {
   const pid = id.parse(form.get("paymentId"));
   const supabase = await createClient();
-  await supabase.rpc("approve_release", { p_payment: pid });
+  const { error } = await supabase.rpc("approve_release", { p_payment: pid });
   revalidatePath(`/payments/${pid}`);
+  if (error) redirect(`/payments/${pid}?error=1`);
 }
 
 /** Market items: buyer has the item, so release to the seller and mark it sold. */
 export async function confirmItemReceived(form: FormData) {
   const pid = id.parse(form.get("paymentId"));
   const supabase = await createClient();
-  await supabase.rpc("confirm_item_received", { p_payment: pid });
+  const { error } = await supabase.rpc("confirm_item_received", { p_payment: pid });
   revalidatePath(`/payments/${pid}`);
+  if (error) redirect(`/payments/${pid}?error=1`);
 }
 
 export async function openDispute(form: FormData) {

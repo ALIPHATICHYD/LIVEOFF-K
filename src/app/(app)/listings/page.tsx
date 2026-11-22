@@ -110,7 +110,7 @@ async function Feed({ searchParams }: { searchParams: Promise<Search> }) {
           </form>
         </details>
 
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 lg:gap-5">
+        <div className="lk-stagger grid gap-4 sm:grid-cols-2 xl:grid-cols-3 lg:gap-5">
           {listings.map((l) => <ListingCard key={l.id} listing={l} photoUrl={first.get(l.id)} saved={saved.has(l.id)} />)}
         </div>
         {!listings.length && !error && (

@@ -24,7 +24,7 @@ async function Content() {
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-6 lg:px-10 lg:py-10">
       <h1 className="font-display text-3xl font-bold">Saved rooms</h1>
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 lg:gap-5">
+      <div className="lk-stagger grid gap-4 sm:grid-cols-2 xl:grid-cols-3 lg:gap-5">
         {listings.map((l) => <ListingCard key={l.id} listing={l} photoUrl={first.get(l.id)} saved />)}
       </div>
       {!listings.length && (

@@ -40,10 +40,12 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
         </form>
       </header>
       <div className="flex flex-1 flex-col gap-2.5 px-4 py-4">
-        {(messages ?? []).map((m) => {
+        {(messages ?? []).map((m, k, all) => {
           const mine = staffView ? m.is_staff : m.sender_id === profile.id;
+          // Only the newest message animates (old ones are read many times), and it grows from its own corner.
+          const fresh = k === all.length - 1 ? `lk-grow ${mine ? "origin-bottom-right" : "origin-bottom-left"}` : "";
           return (
-            <div key={m.id} className={`lk-in max-w-[80%] whitespace-pre-line rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${mine ? "self-end rounded-br-sm bg-brand text-white" : "self-start rounded-bl-sm bg-white"}`}>
+            <div key={m.id} className={`${fresh} max-w-[80%] whitespace-pre-line rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${mine ? "self-end rounded-br-sm bg-brand text-white" : "self-start rounded-bl-sm bg-white"}`}>
               {!mine && m.is_staff && <span className="mb-0.5 block text-xs font-bold text-brand">LiveOff-K Support</span>}
               {m.body}
               <span className={`mt-1 block text-[10px] ${mine ? "text-on-brand" : "text-muted"}`}>{new Date(m.created_at).toLocaleString("en-NG", { dateStyle: "medium", timeStyle: "short", timeZone: "Africa/Lagos" })}</span>

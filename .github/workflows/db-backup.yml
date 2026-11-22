@@ -1,0 +1,58 @@
+# Nightly encrypted backup of the Supabase database (the free plan has no downloadable backups).
+# Setup (repo Settings -> Secrets and variables -> Actions):
+#   SUPABASE_DB_URL     Supabase -> Connect -> "Session pooler" connection string (GitHub runners have no IPv6)
+#   BACKUP_PASSPHRASE   any long random phrase; keep a copy in your password manager
+# The repo is public, so the dump is encrypted before upload. Restore notes: docs/OPERATIONS.md
+name: Database backup
+
+on:
+  schedule:
+    - cron: "15 1 * * *" # 02:15 Lagos time
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+    steps:
+      - name: Check secrets
+        id: check
+        run: |
+          if [ -z "$SUPABASE_DB_URL" ] || [ -z "$BACKUP_PASSPHRASE" ]; then
+            echo "::notice::Backup skipped: add SUPABASE_DB_URL and BACKUP_PASSPHRASE secrets to enable it."
+            echo "run=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "run=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Install pg_dump 17
+        if: steps.check.outputs.run == 'true'
+        run: |
+          sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+          sudo apt-get install -y -qq postgresql-client-17
+      - name: Dump and encrypt
+        if: steps.check.outputs.run == 'true'
+        run: |
+          set -euo pipefail
+          stamp=$(date -u +%Y%m%d-%H%M)
+          PGDUMP=/usr/lib/postgresql/17/bin/pg_dump
+          # App tables, functions and policies
+          $PGDUMP "$SUPABASE_DB_URL" --schema=public --no-owner --no-privileges -Fc -f public.dump
+          # Who the users are (accounts live in Supabase's auth schema)
+          $PGDUMP "$SUPABASE_DB_URL" --data-only --table=auth.users --table=auth.identities -Fc -f auth-users.dump
+          tar czf "liveoff-k-db-$stamp.tgz" public.dump auth-users.dump
+          gpg --batch --yes --pinentry-mode loopback --passphrase "$BACKUP_PASSPHRASE" --symmetric --cipher-algo AES256 \
+            -o "liveoff-k-db-$stamp.tgz.gpg" "liveoff-k-db-$stamp.tgz"
+          rm -f public.dump auth-users.dump "liveoff-k-db-$stamp.tgz"
+      - name: Upload encrypted backup
+        if: steps.check.outputs.run == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-backup
+          path: liveoff-k-db-*.tgz.gpg
+          retention-days: 14

@@ -97,7 +97,7 @@ async function Browse({ searchParams }: { searchParams: Promise<Search> }) {
             {error ? "Could not load the market" : q ? `Results for “${q}”` : cat ? MARKET_CATEGORIES[cat].label : "Fresh on the market"}
           </h2>
           {items.length > 0 ? (
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 lg:gap-4">
+            <div className="lk-stagger grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 lg:gap-4">
               {items.map((i) => <MarketCard key={i.id} item={i} saved={savedIds.has(i.id)} />)}
             </div>
           ) : !error && (

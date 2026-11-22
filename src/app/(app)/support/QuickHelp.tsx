@@ -23,7 +23,7 @@ export function QuickHelp() {
         ))}
       </div>
       {open !== null && (
-        <div className="lk-in max-w-[85%] self-start rounded-2xl rounded-bl-sm bg-white p-3.5 text-sm leading-relaxed shadow-sm">{FAQ[open].a}</div>
+        <div key={open} className="lk-grow origin-top-left max-w-[85%] self-start rounded-2xl rounded-bl-sm bg-white p-3.5 text-sm leading-relaxed shadow-sm">{FAQ[open].a}</div>
       )}
     </div>
   );

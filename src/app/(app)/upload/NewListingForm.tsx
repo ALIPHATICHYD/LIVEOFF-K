@@ -37,8 +37,10 @@ export function NewListingForm({ areas }: { areas: Area[] }) {
         <label className={label}>What are the other fees for?<input name="otherFeesNote" placeholder="e.g. Legal fee" className="field" /></label>
         <p className="rounded-[10px] bg-amber-soft p-3 text-[13px] text-amber-ink">Students see the total first payment. Fees not listed here cannot be charged later.</p>
       </fieldset>
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-4">
         <label className={label}>Bedrooms<select name="bedrooms" defaultValue="1" className="field"><option>0</option><option>1</option><option>2</option><option>3</option></select></label>
+        <label className={label}>Students who can rent it<input name="spaces" inputMode="numeric" defaultValue="1" className="field" aria-describedby="spaces-help" />
+          <span id="spaces-help" className="text-xs font-normal text-muted">1 for a single room. More for shared or hostel spaces.</span></label>
         <label className={label}>Minimum rental (months)<input name="minMonths" inputMode="numeric" defaultValue="12" className="field" /></label>
         <label className={label}>Available from<input type="date" name="availableFrom" className="field" /></label>
       </div>

@@ -59,7 +59,12 @@ export async function payIntoEscrow(_prev: PayState, form: FormData): Promise<Pa
   if (!uid) redirect(`/login?next=/listings/${listingId.data}`);
 
   const { data: payment, error } = await supabase.rpc("start_escrow_payment", { p_listing: listingId.data });
-  if (error || !payment) return { error: error?.message.includes("inspection") ? "Book an inspection before paying." : "Could not start the payment. Try again." };
+  if (error || !payment) {
+    const m = error?.message ?? "";
+    return { error: m.includes("inspection") ? "Book an inspection before paying."
+      : m.includes("full") ? "This room is fully taken. Save it and check back, or message support."
+      : "Could not start the payment. Try again." };
+  }
   await supabase.from("profiles").update({ email: email.data }).eq("id", uid);
 
   if (payment.status !== "pending") redirect(`/payments/${payment.id}`);

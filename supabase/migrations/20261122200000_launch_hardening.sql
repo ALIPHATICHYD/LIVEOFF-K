@@ -369,3 +369,72 @@ $$;
 --   drop trigger <table>_rate_limit / <table>_keep_created_at / inspections_protect / complaints_protect /
 --     support_threads_protect / market_wanted_protect on the tables above.
 --   The new columns and payment_events table are additive and can stay.
+
+-- 5. Room capacity ----------------------------------------------------------------
+-- The landlord says how many students can rent a listing (1 for a single room, more for shared
+-- or hostel spaces). Escrow stops taking new payments once that many students have paid.
+
+alter table public.listings add column if not exists spaces smallint not null default 1 check (spaces between 1 and 200);
+
+-- Students who have paid (or are moving in) for a listing, excluding p_except.
+create or replace function public.listing_paid_count(p_listing uuid, p_except uuid default null)
+returns int language sql stable security definer set search_path = '' as $$
+  select count(distinct student_id)::int from public.payments
+  where listing_id = p_listing and student_id is distinct from p_except
+    and status in ('held', 'moved_in', 'release_approved', 'released', 'disputed');
+$$;
+
+create or replace function public.start_escrow_payment(p_listing uuid)
+returns public.payments language plpgsql security definer set search_path = '' as $$
+declare
+  l public.listings;
+  p public.payments;
+begin
+  if auth.uid() is null then raise exception 'not signed in'; end if;
+  select * into l from public.listings where id = p_listing and status = 'verified';
+  if not found then raise exception 'listing is not available'; end if;
+  if not exists (select 1 from public.inspections i where i.listing_id = p_listing
+                 and i.student_id = auth.uid() and i.status in ('requested', 'confirmed', 'completed')) then
+    raise exception 'book an inspection before paying';
+  end if;
+  select * into p from public.payments where listing_id = p_listing and student_id = auth.uid()
+    and status in ('pending', 'held', 'moved_in', 'release_approved', 'disputed');
+  if found then return p; end if;
+  if public.listing_paid_count(p_listing, auth.uid()) >= l.spaces then raise exception 'room is full'; end if;
+  begin
+    insert into public.payments (listing_id, student_id, landlord_id, rent_kobo, agent_fee_kobo, caution_fee_kobo,
+                                 other_fees_kobo, service_fee_kobo, total_kobo)
+    values (l.id, auth.uid(), l.owner_id, l.rent_per_year_kobo, l.agent_fee_kobo, l.caution_fee_kobo, l.other_fees_kobo,
+            public.service_fee_kobo(),
+            l.rent_per_year_kobo + l.agent_fee_kobo + l.caution_fee_kobo + l.other_fees_kobo + public.service_fee_kobo())
+    returning * into p;
+  exception when unique_violation then
+    select * into p from public.payments where listing_id = p_listing and student_id = auth.uid()
+      and status in ('pending', 'held', 'moved_in', 'release_approved', 'disputed');
+  end;
+  return p;
+end;
+$$;
+
+-- Two students who opened checkout at the same time can both pay for the last space.
+-- The money is kept in escrow and staff see it on /admin to refund one of them.
+create or replace function public.flag_overbooked_room()
+returns trigger language plpgsql security definer set search_path = '' as $$
+declare cap int;
+begin
+  if new.listing_id is not null and new.status = 'held' and old.status is distinct from 'held' then
+    select spaces into cap from public.listings where id = new.listing_id;
+    if public.listing_paid_count(new.listing_id, new.student_id) >= coalesce(cap, 1) then
+      update public.payments set review_note = 'Room was already full when this payment arrived. Refund this student or confirm the landlord has space.'
+      where id = new.id;
+    end if;
+  end if;
+  return null;
+end;
+$$;
+drop trigger if exists payments_flag_overbooked on public.payments;
+create trigger payments_flag_overbooked after update on public.payments
+  for each row execute function public.flag_overbooked_room();
+
+-- Rollback for this section: drop trigger payments_flag_overbooked on public.payments;
+--   then re-run start_escrow_payment from section 1. The spaces column can stay.

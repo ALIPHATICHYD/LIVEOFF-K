@@ -22,7 +22,7 @@ export function AreaPicker({ uni, uniName, areas, rents, budgets, initial }: {
   const toggle = (slug: string) => setPicked((p) => (p.includes(slug) ? p.filter((x) => x !== slug) : [...p, slug]));
 
   return (
-    <form action={savePrefs} className="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-5 px-5 py-6">
+    <form action={savePrefs} className="mx-auto flex min-h-dvh w-full max-w-3xl flex-col gap-5 px-5 py-6">
       <input type="hidden" name="uni" value={uni} />
       {picked.map((a) => <input key={a} type="hidden" name="area" value={a} />)}
       <input type="hidden" name="budget" value={budget} />

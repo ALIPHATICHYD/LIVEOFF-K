@@ -25,7 +25,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
   if (profile?.role === "admin") extra.push({ href: "/admin", label: "Admin", icon: "admin" });
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-dvh">
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-[232px] flex-col gap-6 bg-ink px-3.5 py-6 text-white lg:flex">
         <Link href="/" className="flex items-center gap-2 px-2"><LogoMark size={30} inverse /><Wordmark inverse /></Link>
         <SideNav items={[...items, ...extra]} />

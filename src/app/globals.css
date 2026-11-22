@@ -41,6 +41,8 @@ body {
 @keyframes lk-pulse-kf { 0% { box-shadow: 0 0 0 0 rgba(242, 169, 0, 0.55); } 100% { box-shadow: 0 0 0 16px rgba(242, 169, 0, 0); } }
 .lk-in { animation: lk-up 0.35s ease both; }
 .lk-pop { animation: lk-pop 0.3s ease; }
+.lk-lift { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+.lk-lift:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(15, 31, 23, 0.12); }
 .lk-pulse { animation: lk-pulse-kf 1.6s ease-out infinite; }
 @media (prefers-reduced-motion: reduce) {
   .lk-in, .lk-pop, .lk-pulse { animation: none; }

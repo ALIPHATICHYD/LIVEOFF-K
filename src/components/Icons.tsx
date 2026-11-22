@@ -12,6 +12,14 @@ const paths = {
   send: "M4 12l16-8-6 16-2-6z",
   check: "M5 12l5 5L20 7",
   cap: "M3 9l9-5 9 5-9 5zM7 11v5c3 2 7 2 10 0v-5",
+  bag: "M3 7h18l-2 13H5zM8 7a4 4 0 0 1 8 0",
+  grid: "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z",
+  bed: "M3 18v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6M3 18h18M3 18v2M21 18v2M6 10V7a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v3",
+  pot: "M8 3v4M12 3v4M16 3v4M5 9h14v3a7 7 0 0 1-14 0zM9 21h6",
+  bolt: "M13 2L4 14h7l-1 8 9-12h-7z",
+  book: "M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 21V5M8 7h7",
+  laptop: "M4 5h16v10H4zM2 19h20M9 15v4M15 15v4",
+  bike: "M6 18a3 3 0 1 0 0-.01M18 18a3 3 0 1 0 0-.01M6 18l4-8h5l3 8M10 10l-2-4H6",
 } as const;
 export type IconName = keyof typeof paths;
 

@@ -10,7 +10,7 @@ import { PAYMENT_STATUS, formatNaira } from "@/lib/format";
 import { isPaystackConfigured, markPaidIfValid, verifyTransaction } from "@/lib/paystack";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
-import { approveRelease, confirmMovedIn, openDispute } from "../actions";
+import { approveRelease, confirmItemReceived, confirmMovedIn, openDispute } from "../actions";
 
 type Props = { params: Promise<{ id: string }>; searchParams: Promise<Record<string, string | undefined>> };
 
@@ -21,6 +21,12 @@ const STEPS = [
   { key: "released", title: "Released to landlord", sub: "All done. Enjoy your new room" },
 ];
 const ORDER = ["pending", "held", "moved_in", "release_approved", "released"];
+const ITEM_STEPS = [
+  { key: "held", title: "Paid into escrow", sub: "LiveOff-K holds your money, not the seller" },
+  { key: "release_approved", title: "You got the item", sub: "Meet the seller, check it works, then confirm" },
+  { key: "released", title: "Released to seller", sub: "All done. Enjoy it" },
+];
+const ITEM_ORDER = ["pending", "held", "release_approved", "released"];
 
 async function Content({ params, searchParams }: Props) {
   if (!isSupabaseConfigured) return <SetupNotice />;
@@ -29,7 +35,7 @@ async function Content({ params, searchParams }: Props) {
   const profile = await requireRole(["student", "landlord", "agent", "admin"], `/payments/${id}`);
   const supabase = await createClient();
   const load = () => supabase.from("payments")
-    .select("*, listings(title, area_id)").eq("id", id).maybeSingle();
+    .select("*, listings(title, area_id), market_items(title)").eq("id", id).maybeSingle();
   let { data: p } = await load();
   if (!p) notFound();
 
@@ -43,8 +49,10 @@ async function Content({ params, searchParams }: Props) {
 
   const isStudent = p.student_id === profile.id;
   const s = PAYMENT_STATUS[p.status] ?? PAYMENT_STATUS.pending;
-  const idx = ORDER.indexOf(p.status);
-  const title = (p.listings as { title: string } | null)?.title ?? "Room";
+  const isItem = !!p.market_item_id;
+  const steps = isItem ? ITEM_STEPS : STEPS;
+  const idx = (isItem ? ITEM_ORDER : ORDER).indexOf(p.status);
+  const title = (p.listings as { title: string } | null)?.title ?? (p.market_items as { title: string } | null)?.title ?? "Room";
   const due = p.release_due_at ? new Date(p.release_due_at).toLocaleString("en-NG", { dateStyle: "medium", timeStyle: "short", timeZone: "Africa/Lagos" }) : null;
 
   return (
@@ -73,7 +81,7 @@ async function Content({ params, searchParams }: Props) {
         </section>
       ) : (
         <section className="card flex flex-col p-5">
-          {STEPS.map((step, k) => {
+          {steps.map((step, k) => {
             const n = k + 1;
             const done = idx >= n;
             const now = !done && idx === k; // the next step to happen
@@ -83,7 +91,7 @@ async function Content({ params, searchParams }: Props) {
                   <span className={`flex size-7 items-center justify-center rounded-full border-2 text-[13px] font-bold ${done ? "border-brand bg-brand text-white" : now ? "lk-pulse border-amber bg-amber text-ink" : "border-field bg-white text-muted"}`}>
                     {done ? <Icon name="check" size={14} strokeWidth={3} /> : n}
                   </span>
-                  {n < STEPS.length && <span className={`min-h-6 w-0.5 flex-1 ${done ? "bg-brand" : "bg-[#e3e4da]"}`} />}
+                  {n < steps.length && <span className={`min-h-6 w-0.5 flex-1 ${done ? "bg-brand" : "bg-[#e3e4da]"}`} />}
                 </div>
                 <div className="pb-4">
                   <p className={`mt-0.5 font-bold ${done || now ? "text-ink" : "text-[#8a968f]"}`}>{step.title}</p>
@@ -96,9 +104,13 @@ async function Content({ params, searchParams }: Props) {
       )}
 
       {isStudent && p.status === "pending" && (
-        <Link href={`/listings/${p.listing_id}`} className="btn-primary h-13 rounded-[14px] text-base">Finish paying</Link>
+        <Link href={isItem ? `/market/${p.market_item_id}` : `/listings/${p.listing_id}`} className="btn-primary h-13 rounded-[14px] text-base">Finish paying</Link>
       )}
-      {isStudent && p.status === "held" && (
+      {isStudent && isItem && p.status === "held" && (
+        <form action={confirmItemReceived}><input type="hidden" name="paymentId" value={p.id} />
+          <button className="btn-primary h-13 w-full rounded-[14px] text-base">I&apos;ve got the item, release payment</button></form>
+      )}
+      {isStudent && !isItem && p.status === "held" && (
         <form action={confirmMovedIn}><input type="hidden" name="paymentId" value={p.id} />
           <button className="btn-primary h-13 w-full rounded-[14px] text-base">I&apos;ve moved in</button></form>
       )}
@@ -112,7 +124,7 @@ async function Content({ params, searchParams }: Props) {
           <form action={openDispute} className="mt-3 flex flex-col gap-3">
             <input type="hidden" name="paymentId" value={p.id} />
             <label className="flex flex-col gap-1.5 text-sm font-semibold">What happened?
-              <textarea name="reason" required rows={3} maxLength={1000} className="rounded-[10px] border border-field p-3 font-medium" placeholder="e.g. The room has no water and the landlord isn't responding" />
+              <textarea name="reason" required rows={3} maxLength={1000} className="rounded-[10px] border border-field p-3 font-medium" placeholder={isItem ? "e.g. The seller didn't show up, or the item doesn't work" : "e.g. The room has no water and the landlord isn't responding"} />
             </label>
             <button className="btn h-11 border border-[#e5b4ac] bg-white text-[#a1281a]">Hold my money and talk to support</button>
           </form>

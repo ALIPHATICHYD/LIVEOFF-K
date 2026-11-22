@@ -16,6 +16,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
   }
   const items: NavItem[] = [
     { href: "/listings", label: "Rooms", icon: "home" },
+    { href: "/market", label: "Market", icon: "bag" },
     { href: "/saved", label: "Saved", icon: "heart", badge: savedCount },
     { href: "/payments", label: "Payments", icon: "shield" },
     { href: "/support", label: "Support", icon: "chat" },

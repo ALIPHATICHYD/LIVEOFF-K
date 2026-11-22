@@ -35,15 +35,18 @@ Real log-in texts a code, which needs an SMS provider in Supabase (Auth → Sign
 
 1. Supabase → Authentication → Sign In / Providers → turn on **Allow anonymous sign-ins**.
 2. Supabase → SQL Editor: run `supabase/demo-data.sql` once. It adds a demo landlord and six verified sample rooms (titles end in "(sample)").
-3. On `/login`, testers pick Student, Landlord or Agent and tap **Try the demo**. They get a temporary account with no phone number.
+3. For the Student Market, also run `supabase/demo-market.sql` once: four demo student sellers, ten sample items, three moving-out bundles and three wanted posts.
+4. On `/login`, testers pick Student, Landlord or Agent and tap **Try the demo**. They get a temporary account with no phone number.
 
 Before launch: turn anonymous sign-ins off, set `NEXT_PUBLIC_DEMO_LOGIN=off` in Vercel to hide the button, and remove the sample rooms with
-`delete from auth.users where email = 'demo-landlord@liveoff-k.test';`
+`delete from auth.users where email = 'demo-landlord@liveoff-k.test';` and the sample market items with
+`delete from auth.users where email like 'demo-seller-%@liveoff-k.test';`
 
 ## How the main flows work
 
 - **Onboarding**: `/` asks for the university, `/start/[uni]` shows its nearby areas on a mini map plus a budget. The choice is kept in a cookie, so it works before login.
 - **Escrow**: after booking an inspection, the student pays into escrow (Paystack). Status goes `held` -> `moved_in` (48 hours to report a problem) -> `release_approved` -> `released` once staff record the payout. The student can open a dispute at any point before release, which freezes the money and opens a support chat. Amounts always come from the database, and a payment is only marked paid after Paystack confirms the exact amount (webhook or return-page verification).
+- **Student Market**: `/market` lets students buy and sell used items (room setup, kitchen, power, books, gadgets), moving-out bundles, and post "wanted" requests that sellers answer with offers. Sellers list at `/market/sell`, then add photos; `/market/mine` shows their items, buyer messages and offers. A buyer either pays through the same escrow as rent (`start_market_payment`, price from the database plus a 3% buyer protection fee, min ₦200, max ₦2,000) or sends a "meet on campus" message with their phone number, which only the seller can read. Paying reserves the item (an unpaid checkout frees it after 30 minutes). Status goes `held` -> `release_approved` when the buyer taps "I've got the item" (the item becomes sold) -> `released` once staff pay the seller. A dispute or refund works exactly like rent; a refund or cancelled checkout puts the item back on sale.
 - **Support**: `/support` has instant answers to common questions and a chat with staff. Staff reply from `/admin`.
 
 

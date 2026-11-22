@@ -31,7 +31,7 @@ async function AdminPageContent() {
       .in("status", ["pending_review", "inspection_scheduled"]).order("created_at"),
     supabase.from("complaints").select("id, subject, details, status, is_suspicious_listing, listing_id, created_at")
       .in("status", ["open", "investigating"]).order("created_at", { ascending: false }).limit(20),
-    supabase.from("payments").select("id, reference, status, total_kobo, release_due_at, dispute_reason, listings(title)")
+    supabase.from("payments").select("id, reference, status, total_kobo, release_due_at, dispute_reason, listings(title), market_items(title)")
       .in("status", ["held", "moved_in", "release_approved", "disputed"]).order("created_at"),
     supabase.from("support_threads").select("id, subject, status, updated_at").in("status", ["open"]).order("updated_at").limit(30),
   ]);
@@ -66,7 +66,7 @@ async function AdminPageContent() {
       <section className="card overflow-hidden">
         <h2 className="border-b border-line px-5 py-4 text-lg font-bold">Escrow ({escrow.length})</h2>
         {escrow.map((p) => {
-          const title = (p.listings as unknown as { title: string } | null)?.title ?? "Room";
+          const title = (p.listings as unknown as { title: string } | null)?.title ?? (p.market_items as unknown as { title: string } | null)?.title ?? "Room";
           const due = p.status === "moved_in" && isPast(p.release_due_at);
           const releasable = p.status === "release_approved" || due;
           return (

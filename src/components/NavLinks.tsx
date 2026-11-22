@@ -32,15 +32,15 @@ export function SideNav({ items }: { items: NavItem[] }) {
 export function TabBar({ items }: { items: NavItem[] }) {
   const path = usePathname();
   return (
-    <nav aria-label="Main" className="fixed inset-x-3 bottom-3 z-40 grid h-16 grid-cols-4 rounded-[20px] bg-ink shadow-[0_10px_30px_rgba(15,31,23,0.25)] lg:hidden">
-      {items.slice(0, 4).map((i) => {
+    <nav aria-label="Main" className="fixed inset-x-3 bottom-3 z-40 grid h-16 grid-cols-5 rounded-[20px] bg-ink shadow-[0_10px_30px_rgba(15,31,23,0.25)] lg:hidden">
+      {items.slice(0, 5).map((i) => {
         const on = isActive(path, i.href);
         return (
           <Link key={i.href} href={i.href} aria-current={on ? "page" : undefined}
-            className={`relative flex flex-col items-center justify-center gap-0.5 text-[11px] font-semibold ${on ? "text-amber" : "text-[#cfe3d7]"}`}>
+            className={`relative flex flex-col items-center justify-center gap-0.5 text-[10.5px] font-semibold ${on ? "text-amber" : "text-[#cfe3d7]"}`}>
             <Icon name={i.icon} />
             {i.label}
-            {!!i.badge && <span className="absolute right-[22%] top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber px-1 text-[10px] font-bold text-ink">{i.badge}</span>}
+            {!!i.badge && <span className="absolute right-[18%] top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber px-1 text-[10px] font-bold text-ink">{i.badge}</span>}
           </Link>
         );
       })}

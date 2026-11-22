@@ -21,6 +21,14 @@ export async function approveRelease(form: FormData) {
   revalidatePath(`/payments/${pid}`);
 }
 
+/** Market items: buyer has the item, so release to the seller and mark it sold. */
+export async function confirmItemReceived(form: FormData) {
+  const pid = id.parse(form.get("paymentId"));
+  const supabase = await createClient();
+  await supabase.rpc("confirm_item_received", { p_payment: pid });
+  revalidatePath(`/payments/${pid}`);
+}
+
 export async function openDispute(form: FormData) {
   const pid = id.parse(form.get("paymentId"));
   const reason = String(form.get("reason") ?? "").trim().slice(0, 1000) || "I have a problem with this room.";

@@ -4,6 +4,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
+// Demo sign-in (Supabase anonymous auth) is on unless NEXT_PUBLIC_DEMO_LOGIN=off.
+const DEMO = process.env.NEXT_PUBLIC_DEMO_LOGIN !== "off";
+
 /** 0803 123 4567 or 803... or +234803... -> +2348031234567 */
 function toE164(input: string) {
   const digits = input.replace(/\D/g, "");
@@ -32,6 +35,15 @@ export function LoginForm({ next }: { next: string }) {
     setBusy(false);
     if (error) setError("We couldn't send a code to that number. Check it and try again.");
     else setSent(true);
+  }
+
+  async function tryDemo() {
+    setBusy(true); setError(null);
+    const { error } = await createClient().auth.signInAnonymously({ options: { data: { account_type: accountType } } });
+    setBusy(false);
+    if (error) return setError("Demo sign-in is switched off. Turn on anonymous sign-ins in Supabase (see the README).");
+    router.replace(next);
+    router.refresh();
   }
 
   async function verify(e: React.FormEvent) {
@@ -69,6 +81,14 @@ export function LoginForm({ next }: { next: string }) {
       </fieldset>
       {error && <p role="alert" className="text-sm text-[#a1281a]">{error}</p>}
       <button disabled={busy} className="btn-primary h-12 disabled:opacity-60">{busy ? "Sending…" : "Send code"}</button>
+      {DEMO && (
+        <div className="flex flex-col gap-2 border-t border-line pt-4">
+          <button type="button" disabled={busy} onClick={tryDemo} className="btn-ghost h-12 disabled:opacity-60">
+            Try the demo as a {accountType}
+          </button>
+          <p className="text-xs text-muted">No phone needed. You get a temporary test account; nothing is charged.</p>
+        </div>
+      )}
     </form>
   );
 }

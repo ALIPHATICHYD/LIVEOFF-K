@@ -29,6 +29,17 @@ To make yourself an admin, sign in once, then run in the SQL editor:
 update public.profiles set role = 'admin' where phone = '234XXXXXXXXXX';
 ```
 
+## Let people try it (demo mode)
+
+Real log-in texts a code, which needs an SMS provider in Supabase (Auth → Sign In / Providers → Phone, e.g. Twilio or Termii). Until that is set up, testers can use the demo sign-in:
+
+1. Supabase → Authentication → Sign In / Providers → turn on **Allow anonymous sign-ins**.
+2. Supabase → SQL Editor: run `supabase/demo-data.sql` once. It adds a demo landlord and six verified sample rooms (titles end in "(sample)").
+3. On `/login`, testers pick Student, Landlord or Agent and tap **Try the demo**. They get a temporary account with no phone number.
+
+Before launch: turn anonymous sign-ins off, set `NEXT_PUBLIC_DEMO_LOGIN=off` in Vercel to hide the button, and remove the sample rooms with
+`delete from auth.users where email = 'demo-landlord@liveoff-k.test';`
+
 ## How the main flows work
 
 - **Onboarding**: `/` asks for the university, `/start/[uni]` shows its nearby areas on a mini map plus a budget. The choice is kept in a cookie, so it works before login.

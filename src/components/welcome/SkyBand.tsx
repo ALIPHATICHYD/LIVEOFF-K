@@ -4,7 +4,7 @@ import { Skyline } from "./Scenery";
 export function SkyBand({ className = "h-16 lg:h-24", opacity = "opacity-60" }: { className?: string; opacity?: string }) {
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-      <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.07)_1px,transparent_1.4px)] bg-[length:14px_14px]" />
+      <div className="absolute inset-0 bg-[radial-gradient(in_oklch,oklch(100%_0_0/0.07)_1px,transparent_1.4px)] bg-[length:14px_14px]" />
       <div className={`absolute inset-x-0 bottom-0 ${className} ${opacity}`}><Skyline /></div>
     </div>
   );

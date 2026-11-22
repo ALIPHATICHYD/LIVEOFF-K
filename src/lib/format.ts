@@ -48,7 +48,8 @@ export const PAYMENT_STATUS: Record<string, { label: string; tone: "amber" | "gr
 };
 
 /** Colour for a room card when there is no photo yet, stable per area. */
-const TINTS = ["#2F7D5B", "#C9852B", "#3C6E91", "#8A5A9E", "#B5523B", "#4F6B3A"];
+// Same OKLCH lightness and chroma, only the hue changes.
+const TINTS = ["oklch(55% 0.09 160)", "oklch(55% 0.09 70)", "oklch(55% 0.09 240)", "oklch(55% 0.09 310)", "oklch(55% 0.09 35)", "oklch(55% 0.09 125)"];
 export function areaTint(key: string) {
   let h = 0;
   for (const c of key) h = (h * 31 + c.charCodeAt(0)) >>> 0;

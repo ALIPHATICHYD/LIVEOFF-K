@@ -46,7 +46,7 @@ async function Content({ params }: { params: Promise<{ id: string }> }) {
             <div key={m.id} className={`lk-in max-w-[80%] whitespace-pre-line rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${mine ? "self-end rounded-br-sm bg-brand text-white" : "self-start rounded-bl-sm bg-white"}`}>
               {!mine && m.is_staff && <span className="mb-0.5 block text-xs font-bold text-brand">LiveOff-K Support</span>}
               {m.body}
-              <span className={`mt-1 block text-[10px] ${mine ? "text-[#cfe3d7]" : "text-muted"}`}>{new Date(m.created_at).toLocaleString("en-NG", { dateStyle: "medium", timeStyle: "short", timeZone: "Africa/Lagos" })}</span>
+              <span className={`mt-1 block text-[10px] ${mine ? "text-on-brand" : "text-muted"}`}>{new Date(m.created_at).toLocaleString("en-NG", { dateStyle: "medium", timeStyle: "short", timeZone: "Africa/Lagos" })}</span>
             </div>
           );
         })}

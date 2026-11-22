@@ -27,15 +27,15 @@ async function Content({ searchParams }: { searchParams: Promise<{ listing?: str
       <div className="relative flex items-center gap-3 overflow-hidden rounded-[20px] bg-brand p-5 pb-14 text-white">
         <SkyBand className="h-12" opacity="opacity-50" />
         <span className="relative flex size-12 flex-none items-center justify-center rounded-full bg-amber font-display font-bold text-ink">
-          LK<span className="absolute bottom-0 right-0 size-3 rounded-full border-2 border-brand bg-[#3bc47a]" />
+          LK<span className="absolute bottom-0 right-0 size-3 rounded-full border-2 border-brand bg-success" />
         </span>
         <div className="relative">
           <h1 className="font-display text-2xl font-bold">LiveOff-K Support</h1>
-          <p className="text-sm text-[#cfe3d7]">Real people. We reply as fast as we can, and we hold your rent until you&apos;re happy.</p>
+          <p className="text-sm text-on-brand">Real people. We reply as fast as we can, and we hold your rent until you&apos;re happy.</p>
         </div>
       </div>
 
-      <section className="flex flex-col gap-3 rounded-2xl bg-[#eef1ea] p-4">
+      <section className="flex flex-col gap-3 rounded-2xl bg-mint/70 p-4">
         <div className="max-w-[85%] self-start rounded-2xl rounded-bl-sm bg-white p-3.5 text-sm">Hi! Tap a question for a quick answer, or message us below.</div>
         <QuickHelp />
       </section>
@@ -65,7 +65,7 @@ async function Content({ searchParams }: { searchParams: Promise<{ listing?: str
             <label className="flex flex-col gap-1.5 text-sm font-semibold">Message
               <textarea name="message" required rows={4} maxLength={2000} className="rounded-[10px] border border-field p-3 font-medium" placeholder="Tell us what's going on" />
             </label>
-            {sp.error && <p role="alert" className="text-sm text-[#a1281a]">Please type a message.</p>}
+            {sp.error && <p role="alert" className="text-sm text-danger">Please type a message.</p>}
             <button className="btn-primary h-12">Send</button>
           </form>
         ) : (

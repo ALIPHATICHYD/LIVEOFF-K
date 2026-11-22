@@ -1,16 +1,30 @@
 @import "tailwindcss";
 
 @theme {
-  --color-brand: #0b5d3b;
-  --color-brand-dark: #08442b;
-  --color-ink: #0f1f17;
-  --color-sand: #f6f5ef;
-  --color-amber: #f2a900;
-  --color-mint: #e3f1e8;
-  --color-muted: #4a5a52;
-  --color-line: #dcddd3;
-  --color-field: #c9ccc0;
-  --color-photo: #dce8e0;
+  /* Palette built in OKLCH: greens share hue 160, ambers 78, so equal lightness reads as equal. */
+  --color-brand: oklch(42.4% 0.093 160);
+  --color-brand-dark: oklch(34.3% 0.073 160);
+  --color-ink: oklch(22.2% 0.027 160);
+  --color-body: oklch(41% 0.024 160);
+  --color-muted: oklch(45% 0.024 160);
+  --color-faint: oklch(66% 0.017 160);
+  --color-mint: oklch(94.5% 0.019 160);
+  --color-photo: oklch(92% 0.017 160);
+  --color-on-brand: oklch(90% 0.027 160);
+  --color-on-brand-dim: oklch(79% 0.049 160);
+  --color-sand: oklch(96.9% 0.008 99);
+  --color-amber: oklch(78.5% 0.164 78);
+  --color-amber-soft: oklch(96.5% 0.046 88);
+  --color-amber-ink: oklch(43.5% 0.09 78);
+  --color-amber-deep: oklch(30% 0.062 78);
+  --color-danger: oklch(47% 0.16 30);
+  --color-danger-soft: oklch(95.7% 0.018 20);
+  --color-success: oklch(73% 0.159 155);
+  /* Borders are alpha so they blend into any background. */
+  --color-line: oklch(22.2% 0.027 160 / 0.12);
+  --color-field: oklch(22.2% 0.027 160 / 0.24);
+  --color-danger-line: oklch(47% 0.16 30 / 0.35);
+  --color-amber-line: oklch(43.5% 0.09 78 / 0.3);
   --font-sans: var(--font-body), system-ui, sans-serif;
   --font-display: var(--font-display-face), system-ui, sans-serif;
 }
@@ -32,20 +46,28 @@ body {
 @utility btn-ghost {
   @apply btn border border-field bg-white text-ink hover:bg-sand;
 }
+/* Horizontal scrollers: fade both edges so cut-off items read as "more this way". */
+@utility fade-x {
+  mask-image: linear-gradient(90deg, transparent, black 15% 85%, transparent);
+}
 @utility card {
   @apply rounded-2xl border border-line bg-white;
 }
 
 @keyframes lk-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 @keyframes lk-pop { 0% { transform: scale(0.6); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
-@keyframes lk-pulse-kf { 0% { box-shadow: 0 0 0 0 rgba(242, 169, 0, 0.55); } 100% { box-shadow: 0 0 0 16px rgba(242, 169, 0, 0); } }
+@keyframes lk-pulse-kf { 0% { box-shadow: 0 0 0 0 oklch(78.5% 0.164 78 / 0.55); } 100% { box-shadow: 0 0 0 16px oklch(78.5% 0.164 78 / 0); } }
 .lk-in { animation: lk-up 0.35s ease both; }
 .lk-pop { animation: lk-pop 0.3s ease; }
 .lk-lift { transition: transform 0.15s ease, box-shadow 0.15s ease; }
-.lk-lift:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(15, 31, 23, 0.12); }
+.lk-lift:hover { transform: translateY(-3px); box-shadow: 0 12px 24px oklch(22.2% 0.027 160 / 0.12); }
+/* Icon swaps: the outgoing icon blurs as it fades. */
+.lk-swap { transition: opacity 0.2s ease, filter 0.2s ease, transform 0.2s ease; }
+.lk-swap[data-on="false"] { opacity: 0; filter: blur(4px); transform: scale(0.7); }
 .lk-pulse { animation: lk-pulse-kf 1.6s ease-out infinite; }
 @media (prefers-reduced-motion: reduce) {
   .lk-in, .lk-pop, .lk-pulse { animation: none; }
+  .lk-swap { transition: none; }
 }
 
 /* Welcome scenery */

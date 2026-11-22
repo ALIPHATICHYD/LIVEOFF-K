@@ -32,7 +32,7 @@ export function AreaPicker({ uni, uniName, areas, rents, budgets, initial }: {
         <h1 className="mt-1 font-display text-3xl font-bold leading-tight lg:text-4xl">Pick the areas you&apos;d live in</h1>
       </div>
 
-      <div className="relative mx-auto aspect-[35/27] w-full max-w-[560px] overflow-hidden rounded-[22px] border border-[#d3ded6] bg-[#e3ede6]">
+      <div className="relative mx-auto aspect-[35/27] w-full max-w-[560px] overflow-hidden rounded-[22px] border border-line bg-mint">
         <svg viewBox="0 0 350 270" className="absolute inset-0 size-full" aria-hidden="true">
           <path d="M-10 200 C 80 170, 140 150, 175 135 S 300 60, 360 40" stroke="#fff" strokeWidth="10" fill="none" />
           <path d="M175 135 L 120 280" stroke="#fff" strokeWidth="7" fill="none" />
@@ -40,7 +40,7 @@ export function AreaPicker({ uni, uniName, areas, rents, budgets, initial }: {
         </svg>
         <svg viewBox="0 0 100 100" preserveAspectRatio="none" className="pointer-events-none absolute inset-0 size-full" aria-hidden="true">
           {areas.filter((a) => picked.includes(a.slug)).map((a) => (
-            <line key={a.slug} x1={a.x + 6} y1={a.y + 5} x2={50} y2={50} stroke="#F2A900" strokeWidth="3" strokeLinecap="round"
+            <line key={a.slug} x1={a.x + 6} y1={a.y + 5} x2={50} y2={50} stroke="var(--color-amber)" strokeWidth="3" strokeLinecap="round"
               strokeDasharray="1 7" vectorEffect="non-scaling-stroke" className="lk-route" />
           ))}
         </svg>
@@ -56,7 +56,7 @@ export function AreaPicker({ uni, uniName, areas, rents, budgets, initial }: {
           return (
             <button key={a.slug} type="button" onClick={() => toggle(a.slug)} aria-pressed={on}
               style={{ left: `${a.x}%`, top: `${a.y}%` }}
-              className={`absolute rounded-full border-2 px-3 py-1.5 text-[13px] font-bold shadow-[0_4px_12px_rgba(15,31,23,0.12)] transition-all ${on ? "border-brand bg-brand text-white" : "border-white bg-white text-ink hover:border-brand"}`}>
+              className={`absolute rounded-full border-2 px-3 py-1.5 text-[13px] font-bold shadow-[0_4px_12px_oklch(22.2%_0.027_160/0.12)] transition-all ${on ? "border-brand bg-brand text-white" : "border-white bg-white text-ink hover:border-brand"}`}>
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" aria-hidden="true" className="-mt-0.5 mr-1 inline"><path d="M3 11l9-7 9 7v9h-6v-6H9v6H3z" /></svg>
               {a.name}{a.minutes != null && <span className="ml-1 font-medium opacity-80">{a.minutes} min</span>}
             </button>

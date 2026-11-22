@@ -81,7 +81,7 @@ async function Content({ params, searchParams }: Props) {
           <Link href="/market" className="hidden text-sm font-semibold text-brand lg:block">← Student Market</Link>
           <div className="flex items-start justify-between gap-3">
             <div className="flex flex-wrap gap-2">
-              {it.is_bundle && <span className="rounded-full bg-[#fff3d1] px-2.5 py-1 text-xs font-bold text-[#6b4a00]">Moving-out bundle</span>}
+              {it.is_bundle && <span className="rounded-full bg-amber-soft px-2.5 py-1 text-xs font-bold text-amber-ink">Moving-out bundle</span>}
               <span className="rounded-full bg-mint px-2.5 py-1 text-xs font-bold text-brand">{MARKET_CONDITIONS[it.condition]}</span>
               <span className="rounded-full bg-white px-2.5 py-1 text-xs font-bold text-ink">Pickup in {it.area_name}</span>
             </div>
@@ -103,7 +103,7 @@ async function Content({ params, searchParams }: Props) {
               </ul>
             </section>
           )}
-          {it.description && <p className="whitespace-pre-line text-[15px] leading-relaxed text-[#3f4f47]">{it.description}</p>}
+          {it.description && <p className="whitespace-pre-line text-[15px] leading-relaxed text-body">{it.description}</p>}
 
           {!isSeller && (
             <div className="flex items-center gap-3 rounded-2xl bg-white p-3.5">
@@ -116,7 +116,7 @@ async function Content({ params, searchParams }: Props) {
           )}
 
           {isSeller ? (
-            <section className="flex flex-col gap-3 rounded-2xl border-2 border-brand bg-white p-4">
+            <section className="flex flex-col gap-3 rounded-[30px] border-2 border-brand bg-white p-4">
               {sp.new && <p role="status" className="lk-in rounded-xl bg-mint p-3 text-sm font-semibold text-brand">Your item is live. Add photos so buyers can see it.</p>}
               <h2 className="text-lg font-bold">This is your listing</h2>
               <p className="text-sm text-muted">
@@ -137,16 +137,16 @@ async function Content({ params, searchParams }: Props) {
               </div>
               {it.status === "active" && (
                 <form action={removeItem}><input type="hidden" name="itemId" value={it.id} />
-                  <button className="btn h-11 w-full border border-[#e5b4ac] bg-white text-[#a1281a]">Take it off the market</button></form>
+                  <button className="btn h-11 w-full border border-danger-line bg-white text-danger">Take it off the market</button></form>
               )}
             </section>
           ) : order ? (
-            <section className="flex flex-col gap-3 rounded-2xl border-2 border-brand bg-white p-4">
+            <section className="flex flex-col gap-3 rounded-[30px] border-2 border-brand bg-white p-4">
               <h2 className="text-lg font-bold">You&apos;re buying this</h2>
               <Link href={`/payments/${order.id}`} className="btn-primary h-12">Track your payment</Link>
             </section>
           ) : (
-            <section className="rounded-2xl border-2 border-brand bg-white p-4">
+            <section className="rounded-[30px] border-2 border-brand bg-white p-4">
               <BuyPanel itemId={it.id} price={formatNaira(it.price_kobo)} fee={formatNaira(fee)} total={formatNaira(it.price_kobo + fee)}
                 email={profile.data?.email ?? null} reserved={it.status !== "active"} />
             </section>
@@ -155,7 +155,7 @@ async function Content({ params, searchParams }: Props) {
           <section className="flex flex-col gap-2.5 rounded-2xl bg-ink p-4 text-white">
             <h2 className="font-bold">Buy safely</h2>
             {["Pay through escrow, never to a stranger's account.", "Meet in a busy spot, like the main gate or the library.", "Check the item works before you confirm.", "Something wrong? Open a dispute and support holds the money."].map((t, k) => (
-              <p key={t} className="flex items-center gap-2.5 text-[13px] text-[#cfe3d7]">
+              <p key={t} className="flex items-center gap-2.5 text-[13px] text-on-brand">
                 <span className="flex size-6 flex-none items-center justify-center rounded-full bg-amber text-xs font-bold text-ink">{k + 1}</span>{t}
               </p>
             ))}

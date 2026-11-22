@@ -33,11 +33,11 @@ export function PhotoUploader({ listingId, startOrder }: { listingId: string; st
   }
 
   return (
-    <label className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border border-dashed border-[#9fb5a8] bg-sand p-6 text-center">
+    <label className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border border-dashed border-field bg-sand p-6 text-center">
       <span className="font-bold">{busy ? "Uploading…" : "Add photos"}</span>
       <span className="text-sm text-muted">Room, bathroom, kitchen, compound and street. They are resized automatically.</span>
       <input type="file" accept="image/*" multiple className="sr-only" disabled={busy} onChange={(e) => onFiles(e.target.files)} />
-      {error && <span role="alert" className="text-sm text-[#a1281a]">{error}</span>}
+      {error && <span role="alert" className="text-sm text-danger">{error}</span>}
     </label>
   );
 }
@@ -74,7 +74,7 @@ export function DocumentUploader({ listingId, uploaded }: { listingId: string; u
         </label>
       ))}
       <p className="text-xs text-muted">Documents are private. Only LiveOff-K staff can see them.</p>
-      {error && <p role="alert" className="text-sm text-[#a1281a]">{error}</p>}
+      {error && <p role="alert" className="text-sm text-danger">{error}</p>}
     </div>
   );
 }
@@ -87,7 +87,7 @@ export function SubmitButton({ listingId }: { listingId: string }) {
       <button disabled={pending} onClick={() => start(async () => setError((await submitForReview(listingId)).error ?? null))} className="btn-primary h-12 px-7 disabled:opacity-60">
         {pending ? "Submitting…" : "Request inspection and review"}
       </button>
-      {error && <p role="alert" className="text-sm text-[#a1281a]">{error}</p>}
+      {error && <p role="alert" className="text-sm text-danger">{error}</p>}
     </div>
   );
 }

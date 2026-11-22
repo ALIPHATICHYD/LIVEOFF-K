@@ -24,10 +24,10 @@ export function MarketSaveButton({ itemId, saved, className = "" }: { itemId: st
       }}
       className={`flex size-9 items-center justify-center rounded-full bg-white/95 shadow-sm ${className}`}
     >
-      <svg key={String(on)} className={on ? "lk-pop" : ""} width="18" height="18" viewBox="0 0 24 24"
-        fill={on ? "#0B5D3B" : "none"} stroke="#0B5D3B" strokeWidth="2" aria-hidden="true">
-        <path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z" />
-      </svg>
+      <span className="relative block size-[18px]">
+        <svg data-on={!on} className="lk-swap absolute inset-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-brand)" strokeWidth="2" aria-hidden="true"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z" /></svg>
+        <svg data-on={on} className="lk-swap absolute inset-0" width="18" height="18" viewBox="0 0 24 24" fill="var(--color-brand)" stroke="var(--color-brand)" strokeWidth="2" aria-hidden="true"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z" /></svg>
+      </span>
     </button>
   );
 }

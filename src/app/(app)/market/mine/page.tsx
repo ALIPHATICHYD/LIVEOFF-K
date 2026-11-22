@@ -46,13 +46,13 @@ async function Content() {
           const cover = [...((i.market_photos as { storage_path: string; sort_order: number }[]) ?? [])].sort((a, b) => a.sort_order - b.sort_order)[0]?.storage_path ?? null;
           const msgs = (i.market_requests as unknown as { count: number }[])?.[0]?.count ?? 0;
           return (
-            <Link key={i.id} href={`/market/${i.id}`} className="card flex items-center gap-3 p-3 text-ink hover:border-brand">
+            <Link key={i.id} href={`/market/${i.id}`} className="card flex items-center gap-3 rounded-3xl p-3 text-ink hover:border-brand">
               <ItemThumb category={i.category as MarketCategory} cover={cover} title={i.title} className="size-16 flex-none rounded-xl" iconSize={28} />
               <div className="min-w-0 flex-1">
                 <p className="truncate font-bold">{i.title}</p>
                 <p className="text-sm text-muted">{formatNaira(Number(i.price_kobo))} · {msgs} message{msgs === 1 ? "" : "s"} · {timeAgo(i.created_at)}</p>
               </div>
-              <span className={`flex-none rounded-full px-2.5 py-1 text-xs font-bold ${i.status === "active" ? "bg-mint text-brand" : i.status === "reserved" ? "bg-[#fff3d1] text-[#6b4a00]" : "bg-sand text-muted"}`}>{STATUS[i.status as keyof typeof STATUS]}</span>
+              <span className={`flex-none rounded-full px-2.5 py-1 text-xs font-bold ${i.status === "active" ? "bg-mint text-brand" : i.status === "reserved" ? "bg-amber-soft text-amber-ink" : "bg-sand text-muted"}`}>{STATUS[i.status as keyof typeof STATUS]}</span>
             </Link>
           );
         })}

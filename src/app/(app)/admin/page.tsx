@@ -75,7 +75,7 @@ async function AdminPageContent() {
                 <a href={`/payments/${p.id}`} className="font-bold text-brand">{title}</a>
                 <span className="text-sm text-muted">{formatNaira(Number(p.total_kobo))} · {PAYMENT_STATUS[p.status]?.label}{due && " · 48h passed"} · {p.reference}</span>
               </div>
-              {p.dispute_reason && <p className="text-sm text-[#a1281a]">Dispute: {p.dispute_reason}</p>}
+              {p.dispute_reason && <p className="text-sm text-danger">Dispute: {p.dispute_reason}</p>}
               <div className="flex flex-wrap justify-end gap-2">
                 {releasable && (
                   <form action={markReleased} className="flex gap-2">
@@ -86,7 +86,7 @@ async function AdminPageContent() {
                 )}
                 {["held", "moved_in", "disputed"].includes(p.status) && (
                   <form action={markRefunded}><input type="hidden" name="paymentId" value={p.id} />
-                    <button className="btn h-9 border border-[#e5b4ac] bg-white text-sm text-[#a1281a]">Mark refunded</button></form>
+                    <button className="btn h-9 border border-danger-line bg-white text-sm text-danger">Mark refunded</button></form>
                 )}
               </div>
             </div>
@@ -122,7 +122,7 @@ async function AdminPageContent() {
               Documents:{" "}
               {l.listing_documents.length
                 ? l.listing_documents.map((d) => <a key={d.storage_path} href={signedUrl.get(d.storage_path) ?? undefined} target="_blank" rel="noreferrer" className="mr-3 font-semibold text-brand">{d.kind.replace("_", " ")}</a>)
-                : <span className="text-[#a1281a]">none uploaded</span>}
+                : <span className="text-danger">none uploaded</span>}
             </p>
             <fieldset className="grid gap-2 sm:grid-cols-2">
               {VERIFICATION_CHECKS.map((c) => (
@@ -131,7 +131,7 @@ async function AdminPageContent() {
             </fieldset>
             <div className="flex flex-wrap justify-end gap-2">
               <button name="decision" value="inspect" className="btn-ghost h-9 text-sm">Mark inspection scheduled</button>
-              <button name="decision" value="reject" className="btn h-9 border border-[#e5b4ac] bg-white text-sm text-[#a1281a]">Reject</button>
+              <button name="decision" value="reject" className="btn h-9 border border-danger-line bg-white text-sm text-danger">Reject</button>
               <button name="decision" value="approve" className="btn-primary h-9 text-sm">Approve if all checks pass</button>
             </div>
           </form>
@@ -142,7 +142,7 @@ async function AdminPageContent() {
       <section className="card flex flex-col gap-3 p-5">
         <h2 className="text-lg font-bold">Open complaints and suspicious listings</h2>
         {(complaintsRes.data ?? []).map((c) => (
-          <div key={c.id} className={`flex flex-wrap items-center justify-between gap-3 rounded-xl border p-3.5 ${c.is_suspicious_listing ? "border-[#f0d9a0] bg-[#fffbf0]" : "border-line"}`}>
+          <div key={c.id} className={`flex flex-wrap items-center justify-between gap-3 rounded-xl border p-3.5 ${c.is_suspicious_listing ? "border-amber-line bg-amber-soft/50" : "border-line"}`}>
             <div className="min-w-0">
               <p className="font-semibold">{c.subject}</p>
               <p className="text-sm text-muted">{c.details}</p>
@@ -150,7 +150,7 @@ async function AdminPageContent() {
             <div className="flex gap-2">
               <form action={updateComplaint}><input type="hidden" name="id" value={c.id} /><button name="status" value="investigating" className="btn-ghost h-9 text-sm">Investigate</button></form>
               <form action={updateComplaint}><input type="hidden" name="id" value={c.id} /><button name="status" value="resolved" className="btn-ghost h-9 text-sm">Resolve</button></form>
-              {c.listing_id && <form action={suspendListing}><input type="hidden" name="listingId" value={c.listing_id} /><button className="btn h-9 border border-[#e5b4ac] bg-white text-sm text-[#a1281a]">Suspend listing</button></form>}
+              {c.listing_id && <form action={suspendListing}><input type="hidden" name="listingId" value={c.listing_id} /><button className="btn h-9 border border-danger-line bg-white text-sm text-danger">Suspend listing</button></form>}
             </div>
           </div>
         ))}

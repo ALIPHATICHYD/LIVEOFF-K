@@ -25,7 +25,7 @@ export function BookInspection({ listingId }: { listingId: string }) {
       <label className="flex flex-col gap-1.5 text-[13px] font-semibold">Note (optional)
         <input name="note" maxLength={500} placeholder="e.g. I can come after 2pm lectures" className="field" />
       </label>
-      {state.error && <p role="alert" className="text-sm text-[#a1281a]">{state.error}</p>}
+      {state.error && <p role="alert" className="text-sm text-danger">{state.error}</p>}
       <button disabled={pending} className="btn-primary h-12 disabled:opacity-60">
         {pending ? "Booking…" : "Book free inspection"}
       </button>

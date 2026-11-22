@@ -56,8 +56,8 @@ export function Skyline() {
 export function Scenery() {
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-      <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.07)_1px,transparent_1.4px)] bg-[length:14px_14px]" />
-      <div className="lk-sun absolute -right-16 -top-16 size-72 rounded-full bg-[radial-gradient(circle,rgba(242,169,0,0.45)_0%,rgba(242,169,0,0.12)_45%,rgba(242,169,0,0)_70%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(in_oklch,oklch(100%_0_0/0.07)_1px,transparent_1.4px)] bg-[length:14px_14px]" />
+      <div className="lk-sun absolute -right-16 -top-16 size-72 rounded-full bg-[radial-gradient(circle_in_oklch,oklch(78.5%_0.164_78/0.45)_0%,oklch(78.5%_0.164_78/0.12)_45%,oklch(78.5%_0.164_78/0)_70%)]" />
       <svg width="520" height="520" viewBox="0 0 64 64" className="absolute -right-48 top-32 opacity-[0.06]"><path d="M32 6 L58 28 L52 28 L52 56 L12 56 L12 28 L6 28 Z" fill="#FFFFFF" /></svg>
       <span className="lk-float absolute left-[6%] top-[18%] hidden opacity-50 lg:block">
         <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#F2A900" strokeWidth="2"><circle cx="8" cy="15" r="4" /><path d="M11 12l9-9M17 6l3 3M15 8l2 2" /></svg>

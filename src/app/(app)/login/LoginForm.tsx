@@ -62,7 +62,7 @@ export function LoginForm({ next }: { next: string }) {
       <label className="flex flex-col gap-1.5 text-sm font-semibold">Code
         <input value={code} onChange={(e) => setCode(e.target.value)} inputMode="numeric" autoComplete="one-time-code" required className="field tracking-widest" />
       </label>
-      {error && <p role="alert" className="text-sm text-[#a1281a]">{error}</p>}
+      {error && <p role="alert" className="text-sm text-danger">{error}</p>}
       <button disabled={busy} className="btn-primary h-12 disabled:opacity-60">{busy ? "Checking…" : "Continue"}</button>
       <button type="button" onClick={() => setSent(false)} className="text-sm font-semibold text-brand">Use a different number</button>
     </form>
@@ -79,7 +79,7 @@ export function LoginForm({ next }: { next: string }) {
           </label>
         ))}
       </fieldset>
-      {error && <p role="alert" className="text-sm text-[#a1281a]">{error}</p>}
+      {error && <p role="alert" className="text-sm text-danger">{error}</p>}
       <button disabled={busy} className="btn-primary h-12 disabled:opacity-60">{busy ? "Sending…" : "Send code"}</button>
       {DEMO && (
         <div className="flex flex-col gap-2 border-t border-line pt-4">

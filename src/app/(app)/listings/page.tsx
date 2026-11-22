@@ -73,7 +73,7 @@ async function Feed({ searchParams }: { searchParams: Promise<Search> }) {
           <h1 className="font-display text-[26px] font-bold leading-tight lg:text-4xl">
             {error ? "Could not load rooms" : `${listings.length} verified room${listings.length === 1 ? "" : "s"} picked for you`}
           </h1>
-          <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
+          <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] max-lg:fade-x">
             <Link href={chipHref()} className={`flex-none rounded-full px-3.5 py-2 text-[13px] font-semibold ${!chip ? "bg-amber text-ink" : "bg-white/10 text-white"}`}>All</Link>
             {chipAreas.map((a) => (
               <Link key={a.slug} href={chipHref(a.slug)} className={`flex-none rounded-full px-3.5 py-2 text-[13px] font-semibold ${chip === a.slug ? "bg-amber text-ink" : "bg-white/10 text-white"}`}>
@@ -85,7 +85,7 @@ async function Feed({ searchParams }: { searchParams: Promise<Search> }) {
       </section>
 
       <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-5 lg:px-10 lg:py-7">
-        <div className="flex items-center gap-2.5 rounded-[14px] bg-[#fff3d1] p-3 text-[13px] text-[#6b4a00]">
+        <div className="flex items-center gap-2.5 rounded-[14px] bg-amber-soft p-3 text-[13px] text-amber-ink">
           <Icon name="shield" className="flex-none" />
           Pay through LiveOff-K. Your money is held in escrow until you confirm you&apos;ve moved in.
         </div>

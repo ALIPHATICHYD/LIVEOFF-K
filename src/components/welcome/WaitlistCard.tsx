@@ -17,7 +17,7 @@ export function WaitlistCard({ slug, name, city, abbr }: { slug: string; name: s
           <span className="block text-base font-bold">{name}</span>
           <span className="block text-[13px] opacity-80">{done ? "We'll text you when it opens" : city}</span>
         </span>
-        <span className={`whitespace-nowrap text-xs font-bold ${done ? "lk-pop text-amber" : "text-[#cfe3d7]"}`}>{done ? "ON LIST ✓" : "NOTIFY ME"}</span>
+        <span className={`whitespace-nowrap text-xs font-bold ${done ? "lk-pop text-amber" : "text-on-brand"}`}>{done ? "ON LIST ✓" : "NOTIFY ME"}</span>
       </button>
       {open && !done && (
         <form action={action} className="lk-in mt-3 flex flex-col gap-2">

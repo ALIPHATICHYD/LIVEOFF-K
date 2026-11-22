@@ -85,7 +85,7 @@ async function Content({ params }: Props) {
           <div className="flex items-start justify-between gap-3">
             <div className="flex flex-wrap gap-2">
               <span className="rounded-full bg-mint px-2.5 py-1 text-xs font-bold text-brand">Verified</span>
-              <span className="rounded-full bg-[#fff3d1] px-2.5 py-1 text-xs font-bold text-[#6b4a00]">Escrow protected</span>
+              <span className="rounded-full bg-amber-soft px-2.5 py-1 text-xs font-bold text-amber-ink">Escrow protected</span>
             </div>
             <SaveButton listingId={l.id} saved={saved} />
           </div>
@@ -96,23 +96,23 @@ async function Content({ params }: Props) {
             </p>
           </div>
 
-          <section className="rounded-2xl border border-[#e3e4da] bg-white p-4">
+          <section className="rounded-2xl border border-line bg-white p-4">
             {fees.map((f) => (
-              <div key={f.label} className="flex justify-between py-1 text-sm text-[#3f4f47]"><span>{f.label}</span><span>{formatNaira(f.kobo)}</span></div>
+              <div key={f.label} className="flex justify-between py-1 text-sm text-body"><span>{f.label}</span><span>{formatNaira(f.kobo)}</span></div>
             ))}
-            <div className="mt-2 flex justify-between border-t border-[#e3e4da] pt-2.5 font-bold"><span>Total into escrow</span><span>{formatNaira(total)}</span></div>
+            <div className="mt-2 flex justify-between border-t border-line pt-2.5 font-bold"><span>Total into escrow</span><span>{formatNaira(total)}</span></div>
           </section>
 
           <section className="flex flex-col gap-2.5 rounded-2xl bg-ink p-4 text-white">
             <h2 className="font-bold">How escrow protects you</h2>
             {["Inspect first. Never pay before you see the room.", "Pay into LiveOff-K escrow, not to anyone directly.", "Move in and check everything works.", "Confirm, and only then the landlord is paid."].map((t, k) => (
-              <p key={t} className="flex items-center gap-2.5 text-[13px] text-[#cfe3d7]">
+              <p key={t} className="flex items-center gap-2.5 text-[13px] text-on-brand">
                 <span className="flex size-6 flex-none items-center justify-center rounded-full bg-amber text-xs font-bold text-ink">{k + 1}</span>{t}
               </p>
             ))}
           </section>
 
-          <section className="flex flex-col gap-3 rounded-2xl border-2 border-brand bg-white p-4">
+          <section className="flex flex-col gap-3 rounded-[30px] border-2 border-brand bg-white p-4">
             {payment ? (
               <>
                 <h2 className="text-lg font-bold">You&apos;ve started paying for this room</h2>
@@ -139,7 +139,7 @@ async function Content({ params }: Props) {
 
           <section className="card p-4">
             <h2 className="font-bold">About this room</h2>
-            <p className="mt-2 whitespace-pre-line text-[15px] leading-relaxed text-[#3f4f47]">{l.description || "No description yet."}</p>
+            <p className="mt-2 whitespace-pre-line text-[15px] leading-relaxed text-body">{l.description || "No description yet."}</p>
             {l.facilities.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-2">
                 {l.facilities.map((f) => <span key={f} className="rounded-full border border-line bg-sand px-3 py-1.5 text-sm">{f}</span>)}

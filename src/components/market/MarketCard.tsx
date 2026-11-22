@@ -19,7 +19,7 @@ export function MarketCard({ item, saved }: { item: MarketItem; saved: boolean }
   );
 }
 
-const BUNDLE_BG = ["#FCE3D2", "#DDEBF7", "#E6E0F5", "#FFF0BF"];
+const BUNDLE_BG = ["oklch(93% 0.035 50)", "oklch(93% 0.035 245)", "oklch(93% 0.035 295)", "oklch(93% 0.06 95)"];
 
 export function BundleCard({ item, index }: { item: MarketItem; index: number }) {
   const contents = item.bundle_contents.slice(0, 5).join(", ");
@@ -27,7 +27,7 @@ export function BundleCard({ item, index }: { item: MarketItem; index: number })
     <Link href={`/market/${item.id}`} className="lk-lift flex w-[270px] flex-none flex-col gap-2 rounded-2xl p-4 text-ink sm:w-auto" style={{ background: BUNDLE_BG[index % BUNDLE_BG.length] }}>
       <span className="self-start rounded-full bg-white/80 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide">Moving-out bundle</span>
       <span className="font-display text-lg font-bold leading-tight">{item.title}</span>
-      <span className="line-clamp-2 text-[13px] text-[#3f4f47]">{contents} · {item.area_name}</span>
+      <span className="line-clamp-2 text-[13px] text-body">{contents} · {item.area_name}</span>
       <span className="mt-auto flex items-baseline gap-2">
         <span className="font-display text-xl font-bold text-brand">{formatNaira(item.price_kobo)}</span>
         {item.original_value_kobo && <s className="text-sm text-muted">{formatNaira(item.original_value_kobo)}</s>}

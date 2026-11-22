@@ -59,10 +59,10 @@ async function Browse({ searchParams }: { searchParams: Promise<Search> }) {
             <span className="flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-2 text-[13px] font-semibold">
               <Icon name="cap" size={14} className="text-amber" />{university.short_name ?? university.name} students only
             </span>
-            {uid && <Link href="/market/mine" className="text-[13px] font-semibold text-[#cfe3d7] underline-offset-4 hover:underline">My listings</Link>}
+            {uid && <Link href="/market/mine" className="text-[13px] font-semibold text-on-brand underline-offset-4 hover:underline">My listings</Link>}
           </div>
           <h1 className="font-display text-[28px] font-bold leading-tight lg:text-[38px]">Student Market</h1>
-          <p className="max-w-xl text-[15px] text-[#cfe3d7]">Buy and sell room stuff, books and gadgets with students near you. Pay through escrow, so the seller gets paid only after you have the item.</p>
+          <p className="max-w-xl text-[15px] text-on-brand">Buy and sell room stuff, books and gadgets with students near you. Pay through escrow, so the seller gets paid only after you have the item.</p>
           <div className="flex gap-2">
             <form action="/market" className="flex h-12 min-w-0 flex-1 items-center gap-2 rounded-[14px] bg-white px-3.5 text-ink">
               {cat && <input type="hidden" name="cat" value={cat} />}
@@ -71,7 +71,7 @@ async function Browse({ searchParams }: { searchParams: Promise<Search> }) {
             </form>
             <Link href="/market/sell" className="btn h-12 flex-none bg-amber px-4 text-ink">+ Sell</Link>
           </div>
-          <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
+          <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] max-lg:fade-x">
             <Link href={href()} className={`flex flex-none items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] font-semibold ${!cat ? "bg-amber text-ink" : "bg-white/10 text-white"}`}><Icon name="grid" size={15} />All</Link>
             {(Object.keys(MARKET_CATEGORIES) as MarketCategory[]).map((c) => (
               <Link key={c} href={href(c)} className={`flex flex-none items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] font-semibold ${cat === c ? "bg-amber text-ink" : "bg-white/10 text-white"}`}>
@@ -86,7 +86,7 @@ async function Browse({ searchParams }: { searchParams: Promise<Search> }) {
         {bundles.length > 0 && (
           <section className="flex flex-col gap-3">
             <div><h2 className="font-display text-xl font-bold">Moving-out bundles</h2><p className="text-sm text-muted">Whole rooms of stuff, one price</p></div>
-            <div className="-mx-5 flex gap-3 overflow-x-auto px-5 pb-1 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:px-0 lg:grid-cols-3">
+            <div className="-mx-5 flex gap-3 overflow-x-auto px-5 pb-1 [scrollbar-width:none] max-sm:fade-x sm:mx-0 sm:grid sm:grid-cols-2 sm:px-0 lg:grid-cols-3">
               {bundles.map((b, k) => <BundleCard key={b.id} item={b} index={k} />)}
             </div>
           </section>
@@ -107,9 +107,9 @@ async function Browse({ searchParams }: { searchParams: Promise<Search> }) {
           )}
         </section>
 
-        <section id="wanted" className="flex scroll-mt-20 flex-col gap-3 rounded-3xl bg-[#fff3d1] p-4 lg:p-6">
+        <section id="wanted" className="flex scroll-mt-20 flex-col gap-3 rounded-[32px] bg-amber-soft p-4 lg:p-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <div><h2 className="font-display text-xl font-bold text-[#3d2a00]">Wanted</h2><p className="text-sm text-[#6b4a00]">Students looking for something. Got it? Make an offer.</p></div>
+            <div><h2 className="font-display text-xl font-bold text-amber-deep">Wanted</h2><p className="text-sm text-amber-ink">Students looking for something. Got it? Make an offer.</p></div>
             <PostWanted universityId={university.id} areas={areas ?? []} />
           </div>
           <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
@@ -117,7 +117,7 @@ async function Browse({ searchParams }: { searchParams: Promise<Search> }) {
               const area = (w.areas as unknown as { name: string } | null)?.name;
               const mine = w.user_id === uid;
               return (
-                <div key={w.id} className="flex flex-col gap-2 rounded-2xl bg-white p-3.5">
+                <div key={w.id} className="flex flex-col gap-2 rounded-2xl bg-white p-3.5 lg:rounded-lg">
                   <p className="font-semibold">{w.text}</p>
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <span className="text-xs text-muted">{[area ?? "Any area", w.max_price_kobo ? `up to ${formatNaira(Number(w.max_price_kobo))}` : null, timeAgo(w.created_at)].filter(Boolean).join(" · ")}</span>
@@ -126,7 +126,7 @@ async function Browse({ searchParams }: { searchParams: Promise<Search> }) {
                 </div>
               );
             })}
-            {!wantedRows?.length && <p className="text-sm text-[#6b4a00]">No requests yet. Be the first to post one.</p>}
+            {!wantedRows?.length && <p className="text-sm text-amber-ink">No requests yet. Be the first to post one.</p>}
           </div>
         </section>
       </div>

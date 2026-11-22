@@ -31,7 +31,7 @@ export function SellForm({ areas }: { areas: { id: string; name: string }[] }) {
   return (
     <form action={action} className="flex flex-col gap-5">
       <button type="button" aria-pressed={bundle} onClick={() => setBundle(!bundle)}
-        className={`flex items-center gap-3 rounded-2xl border-2 p-4 text-left transition-colors ${bundle ? "border-brand bg-mint" : "border-line bg-white"}`}>
+        className={`flex items-center gap-3 rounded-xl border-2 p-4 text-left transition-colors ${bundle ? "border-brand bg-mint" : "border-line bg-white"}`}>
         <Icon name="bag" size={28} className="flex-none text-brand" />
         <span className="flex-1"><span className="block font-bold">Moving out? Sell it all as one bundle</span>
           <span className="text-[13px] text-muted">Mattress, gas, fan and table for one price. Bundles sell faster.</span></span>
@@ -75,13 +75,13 @@ export function SellForm({ areas }: { areas: { id: string; name: string }[] }) {
         <textarea name="description" rows={4} maxLength={1500} className="rounded-[10px] border border-field p-3 font-medium" placeholder="Age, any faults, what's included, when you can hand it over." />
       </label>
 
-      <p className="flex gap-2.5 rounded-xl bg-[#fff3d1] p-3 text-[13px] text-[#6b4a00]">
+      <p className="flex gap-2.5 rounded-xl bg-amber-soft p-3 text-[13px] text-amber-ink">
         <Icon name="shield" className="flex-none" />
         <span>If the buyer pays through escrow, you get the money as soon as they confirm they have the item.
           {kobo >= 10000 && ` The buyer pays a ₦${(marketFeeKobo(kobo) / 100).toLocaleString("en-NG")} protection fee on top; you get the full price.`}</span>
       </p>
-      {state.error && <p role="alert" className="text-sm text-[#a1281a]">{state.error}</p>}
-      <button disabled={pending} className="btn-primary h-13 rounded-[14px] text-base disabled:opacity-60">{pending ? "Posting…" : "Post and add photos"}</button>
+      {state.error && <p role="alert" className="text-sm text-danger">{state.error}</p>}
+      <button disabled={pending} className="btn-primary h-13 rounded-xl text-base disabled:opacity-60">{pending ? "Posting…" : "Post and add photos"}</button>
     </form>
   );
 }

@@ -62,16 +62,16 @@ async function Content({ params, searchParams }: Props) {
 
       <section className="relative overflow-hidden rounded-[20px] bg-brand p-5 pb-12 text-white">
         <SkyBand className="h-12" opacity="opacity-50" />
-        <div className="relative"><p className="text-[13px] text-[#cfe3d7]">{title}</p>
+        <div className="relative"><p className="text-[13px] text-on-brand">{title}</p>
         <p className="mt-1 font-display text-[32px] font-bold">{formatNaira(Number(p.total_kobo))}</p>
-        <span className={`mt-2 inline-block rounded-full px-2.5 py-1 text-xs font-bold text-ink ${p.status === "released" ? "bg-mint" : p.status === "disputed" ? "bg-[#fdecec] text-[#a1281a]" : "bg-amber"}`}>{s.label}</span></div>
+        <span className={`mt-2 inline-block rounded-full px-2.5 py-1 text-xs font-bold text-ink ${p.status === "released" ? "bg-mint" : p.status === "disputed" ? "bg-danger-soft text-danger" : "bg-amber"}`}>{s.label}</span></div>
         <Icon name="shield" size={150} strokeWidth={1} className="absolute -bottom-10 -right-8 opacity-10" />
       </section>
 
       {sp.setup && (
-        <p className="rounded-xl bg-[#fff3d1] p-3 text-sm text-[#6b4a00]">Online payments aren&apos;t switched on yet. Add the Paystack keys to the site settings (see the README).</p>
+        <p className="rounded-xl bg-amber-soft p-3 text-sm text-amber-ink">Online payments aren&apos;t switched on yet. Add the Paystack keys to the site settings (see the README).</p>
       )}
-      {sp.error && <p role="alert" className="rounded-xl bg-[#fdecec] p-3 text-sm text-[#a1281a]">That didn&apos;t work. Try again or message support.</p>}
+      {sp.error && <p role="alert" className="rounded-xl bg-danger-soft p-3 text-sm text-danger">That didn&apos;t work. Try again or message support.</p>}
 
       {p.status === "disputed" || p.status === "refunded" ? (
         <section className="card p-5">
@@ -91,10 +91,10 @@ async function Content({ params, searchParams }: Props) {
                   <span className={`flex size-7 items-center justify-center rounded-full border-2 text-[13px] font-bold ${done ? "border-brand bg-brand text-white" : now ? "lk-pulse border-amber bg-amber text-ink" : "border-field bg-white text-muted"}`}>
                     {done ? <Icon name="check" size={14} strokeWidth={3} /> : n}
                   </span>
-                  {n < steps.length && <span className={`min-h-6 w-0.5 flex-1 ${done ? "bg-brand" : "bg-[#e3e4da]"}`} />}
+                  {n < steps.length && <span className={`min-h-6 w-0.5 flex-1 ${done ? "bg-brand" : "bg-line"}`} />}
                 </div>
                 <div className="pb-4">
-                  <p className={`mt-0.5 font-bold ${done || now ? "text-ink" : "text-[#8a968f]"}`}>{step.title}</p>
+                  <p className={`mt-0.5 font-bold ${done || now ? "text-ink" : "text-faint"}`}>{step.title}</p>
                   <p className="text-[13px] text-muted">{step.key === "moved_in" && due && p.status === "moved_in" ? `Report any problem before ${due}` : step.sub}</p>
                 </div>
               </div>
@@ -120,13 +120,13 @@ async function Content({ params, searchParams }: Props) {
       )}
       {isStudent && ["held", "moved_in"].includes(p.status) && (
         <details className="card p-4">
-          <summary className="cursor-pointer list-none font-bold text-[#a1281a]">Something&apos;s wrong? Hold payment and open a dispute</summary>
+          <summary className="cursor-pointer list-none font-bold text-danger">Something&apos;s wrong? Hold payment and open a dispute</summary>
           <form action={openDispute} className="mt-3 flex flex-col gap-3">
             <input type="hidden" name="paymentId" value={p.id} />
             <label className="flex flex-col gap-1.5 text-sm font-semibold">What happened?
               <textarea name="reason" required rows={3} maxLength={1000} className="rounded-[10px] border border-field p-3 font-medium" placeholder={isItem ? "e.g. The seller didn't show up, or the item doesn't work" : "e.g. The room has no water and the landlord isn't responding"} />
             </label>
-            <button className="btn h-11 border border-[#e5b4ac] bg-white text-[#a1281a]">Hold my money and talk to support</button>
+            <button className="btn h-11 border border-danger-line bg-white text-danger">Hold my money and talk to support</button>
           </form>
         </details>
       )}

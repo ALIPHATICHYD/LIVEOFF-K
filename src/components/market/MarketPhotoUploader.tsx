@@ -34,11 +34,11 @@ export function MarketPhotoUploader({ itemId, startOrder }: { itemId: string; st
 
   if (!left) return <p className="text-sm text-muted">You&apos;ve added 6 photos, the most allowed.</p>;
   return (
-    <label className="flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border border-dashed border-[#9fb5a8] bg-sand p-5 text-center">
+    <label className="flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border border-dashed border-field bg-sand p-5 text-center">
       <span className="font-bold">{busy ? "Uploading…" : startOrder ? "Add more photos" : "Add up to 6 photos"}</span>
       <span className="text-sm text-muted">Clear photos in daylight sell faster.</span>
       <input type="file" accept="image/*" multiple className="sr-only" disabled={busy} onChange={(e) => onFiles(e.target.files)} />
-      {error && <span role="alert" className="text-sm text-[#a1281a]">{error}</span>}
+      {error && <span role="alert" className="text-sm text-danger">{error}</span>}
     </label>
   );
 }

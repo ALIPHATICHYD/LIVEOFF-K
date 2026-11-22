@@ -15,7 +15,7 @@ export function ListingCard({ listing, photoUrl, saved }: { listing: PublicListi
   const mins = listing.minutes_to_gate ?? listing.area_minutes;
   const extras = [listing.furnished ? "Furnished" : "Unfurnished", ...listing.facilities.slice(0, 2)].join(" · ");
   return (
-    <article className="lk-in overflow-hidden rounded-[20px] border border-[#e3e4da] bg-white shadow-[0_6px_18px_rgba(15,31,23,0.06)] transition-transform hover:-translate-y-0.5">
+    <article className="lk-in overflow-hidden rounded-[20px] border border-line bg-white shadow-[0_6px_18px_oklch(22.2%_0.027_160/0.06)] transition-transform hover:-translate-y-0.5">
       <Link href={`/listings/${listing.id}`} className="relative block h-44">
         {photoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element -- resized on upload

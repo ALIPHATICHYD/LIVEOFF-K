@@ -37,7 +37,7 @@ async function UniList() {
           </>
         );
         return u.is_live ? (
-          <Link key={u.slug} href={`/start/${u.slug}`} className="group flex items-center gap-3.5 rounded-2xl border-2 border-amber bg-white p-3.5 text-ink transition hover:-translate-y-[3px] hover:shadow-[0_10px_24px_rgba(0,0,0,0.22)]">
+          <Link key={u.slug} href={`/start/${u.slug}`} className="group flex items-center gap-3.5 rounded-2xl border-2 border-amber bg-white p-3.5 text-ink transition hover:-translate-y-[3px] hover:shadow-[0_10px_24px_oklch(0%_0_0/0.22)]">
             {inner}
             <span aria-hidden="true" className="font-bold text-brand transition-transform group-hover:translate-x-1">→</span>
           </Link>
@@ -73,15 +73,15 @@ export default function Welcome() {
       <header className="relative z-[1] flex items-center justify-between px-5 py-5 lg:px-12">
         <span className="flex items-center gap-2"><LogoMark size={32} inverse /><Wordmark inverse /></span>
         <div className="flex items-center gap-4 text-sm font-semibold">
-          <Link href="/listings" className="text-[#cfe3d7] hover:text-white">Browse rooms</Link>
+          <Link href="/listings" className="text-on-brand hover:text-white">Browse rooms</Link>
           <Link href="/login" className="btn bg-amber text-ink">Log in</Link>
         </div>
       </header>
       <div className="lk-in relative z-[1] flex flex-1 flex-col justify-center gap-8 px-5 pb-[140px] pt-2 lg:flex-row lg:items-center lg:justify-center lg:gap-16 lg:px-12 lg:pb-[230px]">
         <div className="flex max-w-md flex-col gap-4">
-          <p className="text-sm text-[#cfe3d7]">Step 1 of 2</p>
+          <p className="text-sm text-on-brand">Step 1 of 2</p>
           <h1 className="font-display text-4xl font-bold leading-[1.05] lg:text-[52px]">Where do you study?</h1>
-          <p className="text-[15px] text-[#cfe3d7] lg:text-lg">
+          <p className="text-[15px] text-on-brand lg:text-lg">
             We&apos;ll show verified rooms in the areas students from your school actually live in. Your rent stays in escrow until you move in.
           </p>
           <Suspense fallback={<div className="h-[22px]" />}><LiveTicker /></Suspense>
@@ -91,7 +91,7 @@ export default function Welcome() {
           <Suspense fallback={<div className="h-64 w-full rounded-2xl bg-white/5" />}>
             <UniList />
           </Suspense>
-          <p className="text-xs text-[#9fc4b0]">More Abuja campuses are coming. Tap one to get a text when it opens.</p>
+          <p className="text-xs text-on-brand-dim">More Abuja campuses are coming. Tap one to get a text when it opens.</p>
         </div>
       </div>
     </div>

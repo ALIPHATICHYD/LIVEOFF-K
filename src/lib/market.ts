@@ -1,13 +1,14 @@
 import type { IconName } from "@/components/Icons";
 import { supabaseUrl } from "./supabase/config";
 
+/** Category tints share one OKLCH lightness, so no card looks louder than another. */
 export const MARKET_CATEGORIES = {
-  room: { label: "Room setup", icon: "bed", tint: "#FCE3D2" },
-  kitchen: { label: "Kitchen", icon: "pot", tint: "#DDEBF7" },
-  power: { label: "Power", icon: "bolt", tint: "#FFF0BF" },
-  study: { label: "Books & study", icon: "book", tint: "#E6E0F5" },
-  gadgets: { label: "Gadgets", icon: "laptop", tint: "#DCE8E0" },
-  other: { label: "Other", icon: "bike", tint: "#F3DDE6" },
+  room: { label: "Room setup", icon: "bed", tint: "oklch(93% 0.035 50)" },
+  kitchen: { label: "Kitchen", icon: "pot", tint: "oklch(93% 0.035 245)" },
+  power: { label: "Power", icon: "bolt", tint: "oklch(93% 0.06 95)" },
+  study: { label: "Books & study", icon: "book", tint: "oklch(93% 0.035 295)" },
+  gadgets: { label: "Gadgets", icon: "laptop", tint: "oklch(93% 0.035 160)" },
+  other: { label: "Other", icon: "bike", tint: "oklch(93% 0.035 350)" },
 } as const satisfies Record<string, { label: string; icon: IconName; tint: string }>;
 export type MarketCategory = keyof typeof MARKET_CATEGORIES;
 

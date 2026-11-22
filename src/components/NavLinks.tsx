@@ -18,8 +18,8 @@ export function SideNav({ items }: { items: NavItem[] }) {
         const on = isActive(path, i.href);
         return (
           <Link key={i.href} href={i.href} aria-current={on ? "page" : undefined}
-            className={`flex h-12 items-center gap-3 rounded-xl px-3.5 text-[15px] font-semibold transition-colors ${on ? "bg-white/10 text-amber" : "text-[#cfe3d7] hover:bg-white/5 hover:text-white"}`}>
-            <Icon name={i.icon} />
+            className={`flex h-12 items-center gap-3 rounded-xl px-3.5 text-[15px] font-semibold transition-colors ${on ? "bg-white/10 text-amber" : "text-on-brand hover:bg-white/5 hover:text-white"}`}>
+            <Icon name={i.icon} strokeWidth={1.75} />
             <span className="flex-1">{i.label}</span>
             {!!i.badge && <span className="rounded-full bg-amber px-2 text-xs font-bold text-ink">{i.badge}</span>}
           </Link>
@@ -32,13 +32,13 @@ export function SideNav({ items }: { items: NavItem[] }) {
 export function TabBar({ items }: { items: NavItem[] }) {
   const path = usePathname();
   return (
-    <nav aria-label="Main" className="fixed inset-x-3 bottom-3 z-40 grid h-16 grid-cols-5 rounded-[20px] bg-ink shadow-[0_10px_30px_rgba(15,31,23,0.25)] lg:hidden">
+    <nav aria-label="Main" className="fixed inset-x-3 bottom-3 z-40 grid h-16 grid-cols-5 rounded-[20px] bg-ink shadow-[0_10px_30px_oklch(22.2%_0.027_160/0.25)] lg:hidden">
       {items.slice(0, 5).map((i) => {
         const on = isActive(path, i.href);
         return (
           <Link key={i.href} href={i.href} aria-current={on ? "page" : undefined}
-            className={`relative flex flex-col items-center justify-center gap-0.5 text-[10.5px] font-semibold ${on ? "text-amber" : "text-[#cfe3d7]"}`}>
-            <Icon name={i.icon} />
+            className={`relative flex flex-col items-center justify-center gap-0.5 text-[10.5px] font-semibold ${on ? "text-amber" : "text-on-brand"}`}>
+            <Icon name={i.icon} strokeWidth={1.5} />
             {i.label}
             {!!i.badge && <span className="absolute right-[18%] top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-amber px-1 text-[10px] font-bold text-ink">{i.badge}</span>}
           </Link>

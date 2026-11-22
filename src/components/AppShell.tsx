@@ -30,7 +30,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-[232px] flex-col gap-6 bg-ink px-3.5 py-6 text-white lg:flex">
         <Link href="/" className="flex items-center gap-2 px-2"><LogoMark size={30} inverse /><Wordmark inverse /></Link>
         <SideNav items={[...items, ...extra]} />
-        <div className="mt-auto flex flex-col gap-3 px-2 text-sm text-[#9fc4b0]">
+        <div className="mt-auto flex flex-col gap-3 px-2 text-sm text-on-brand-dim">
           {profile ? (
             <form action="/auth/signout" method="post"><button className="font-semibold text-white">Log out</button></form>
           ) : (

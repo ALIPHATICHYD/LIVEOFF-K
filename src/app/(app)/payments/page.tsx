@@ -9,7 +9,7 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Payments" };
-const TONE = { amber: "bg-[#fff3d1] text-[#6b4a00]", green: "bg-mint text-brand", red: "bg-[#fdecec] text-[#a1281a]", grey: "bg-sand text-muted" };
+const TONE = { amber: "bg-amber-soft text-amber-ink", green: "bg-mint text-brand", red: "bg-danger-soft text-danger", grey: "bg-sand text-muted" };
 
 async function Content() {
   if (!isSupabaseConfigured) return <SetupNotice />;

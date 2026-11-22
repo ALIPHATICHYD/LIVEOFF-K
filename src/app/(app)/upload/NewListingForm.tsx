@@ -35,7 +35,7 @@ export function NewListingForm({ areas }: { areas: Area[] }) {
           <label className={label}>Other fees<input name="otherFees" inputMode="numeric" defaultValue="0" className="field" /></label>
         </div>
         <label className={label}>What are the other fees for?<input name="otherFeesNote" placeholder="e.g. Legal fee" className="field" /></label>
-        <p className="rounded-[10px] bg-[#fff3d1] p-3 text-[13px] text-[#6b4a00]">Students see the total first payment. Fees not listed here cannot be charged later.</p>
+        <p className="rounded-[10px] bg-amber-soft p-3 text-[13px] text-amber-ink">Students see the total first payment. Fees not listed here cannot be charged later.</p>
       </fieldset>
       <div className="grid gap-4 sm:grid-cols-3">
         <label className={label}>Bedrooms<select name="bedrooms" defaultValue="1" className="field"><option>0</option><option>1</option><option>2</option><option>3</option></select></label>
@@ -54,7 +54,7 @@ export function NewListingForm({ areas }: { areas: Area[] }) {
       <label className={label}>Description
         <textarea name="description" rows={4} placeholder="Room size, water, power, rules, neighbours" className="rounded-[10px] border border-field p-3 font-medium" />
       </label>
-      {state.error && <p role="alert" className="text-sm text-[#a1281a]">{state.error}</p>}
+      {state.error && <p role="alert" className="text-sm text-danger">{state.error}</p>}
       <div className="flex justify-end">
         <button disabled={pending} className="btn-primary h-12 px-7 disabled:opacity-60">{pending ? "Saving…" : "Continue to photos"}</button>
       </div>

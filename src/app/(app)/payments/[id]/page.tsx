@@ -7,7 +7,7 @@ import { PageLoading } from "@/components/PageLoading";
 import { SetupNotice } from "@/components/SetupNotice";
 import { requireRole } from "@/lib/auth";
 import { PAYMENT_STATUS, formatNaira } from "@/lib/format";
-import { isPaystackConfigured, markPaidIfValid, verifyTransaction } from "@/lib/paystack";
+import { isPaystackConfigured, recordCharge, verifyTransaction } from "@/lib/paystack";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 import { createClient } from "@/lib/supabase/server";
 import { approveRelease, confirmItemReceived, confirmMovedIn, openDispute } from "../actions";
@@ -40,10 +40,18 @@ async function Content({ params, searchParams }: Props) {
   if (!p) notFound();
 
   // Returning from Paystack: confirm with Paystack directly (never trust the URL alone).
+  // Each checkout attempt uses "<payment reference>-<suffix>"; a late payment on an expired checkout still counts.
   const ref = sp.reference ?? sp.trxref;
-  if (p.status === "pending" && ref === p.reference && isPaystackConfigured()) {
-    const result = await verifyTransaction(p.reference);
-    if (result && (await markPaidIfValid(p.reference, result))) ({ data: p } = await load());
+  if (ref && (ref === p.reference || ref.startsWith(`${p.reference}-`)) && ["pending", "cancelled"].includes(p.status) && isPaystackConfigured()) {
+    const result = await verifyTransaction(ref);
+    if (result) {
+      try {
+        await recordCharge(ref, result, "return");
+        ({ data: p } = await load());
+      } catch (err) {
+        console.error(JSON.stringify({ level: "error", msg: "return page could not record charge", reference: ref, error: String(err) }));
+      }
+    }
   }
   if (!p) notFound();
 
@@ -64,12 +72,15 @@ async function Content({ params, searchParams }: Props) {
         <SkyBand className="h-12" opacity="opacity-50" />
         <div className="relative"><p className="text-[13px] text-on-brand">{title}</p>
         <p className="mt-1 font-display text-[32px] font-bold">{formatNaira(Number(p.total_kobo))}</p>
-        <span className={`mt-2 inline-block rounded-full px-2.5 py-1 text-xs font-bold text-ink ${p.status === "released" ? "bg-mint" : p.status === "disputed" ? "bg-danger-soft text-danger" : "bg-amber"}`}>{s.label}</span></div>
+        <span key={p.status} className={`mt-2 inline-block origin-left rounded-full px-2.5 py-1 text-xs font-bold text-ink ${["held", "released"].includes(p.status) ? "lk-pop " : ""}${p.status === "released" ? "bg-mint" : p.status === "disputed" ? "bg-danger-soft text-danger" : "bg-amber"}`}>{s.label}</span></div>
         <Icon name="shield" size={150} strokeWidth={1} className="absolute -bottom-10 -right-8 opacity-10" />
       </section>
 
       {sp.setup && (
         <p className="rounded-xl bg-amber-soft p-3 text-sm text-amber-ink">Online payments aren&apos;t switched on yet. Add the Paystack keys to the site settings (see the README).</p>
+      )}
+      {p.needs_refund_at && p.status === "cancelled" && (
+        <p role="status" className="rounded-xl bg-amber-soft p-3 text-sm text-amber-ink">Your payment arrived after this checkout had expired and someone else had already reserved it. We&apos;re refunding you in full. Message support if you have questions.</p>
       )}
       {sp.error && <p role="alert" className="rounded-xl bg-danger-soft p-3 text-sm text-danger">That didn&apos;t work. Try again or message support.</p>}
 

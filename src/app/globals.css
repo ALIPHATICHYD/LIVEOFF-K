@@ -25,6 +25,9 @@
   --color-field: oklch(22.2% 0.027 160 / 0.24);
   --color-danger-line: oklch(47% 0.16 30 / 0.35);
   --color-amber-line: oklch(43.5% 0.09 78 / 0.3);
+  /* Motion: things decelerate into place (slow out) and small confirmations overshoot a touch. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --font-sans: var(--font-body), system-ui, sans-serif;
   --font-display: var(--font-display-face), system-ui, sans-serif;
 }
@@ -39,6 +42,9 @@ body {
 }
 @utility btn {
   @apply inline-flex h-11 items-center justify-center gap-2 rounded-[10px] px-4 text-[15px] font-semibold;
+  /* Press feedback within one frame: squash on press, spring back on release (interruptible). */
+  transition: transform 160ms var(--ease-spring), background-color 150ms ease, opacity 150ms ease;
+  &:active:not(:disabled) { transform: scale(0.97); transition-duration: 80ms; }
 }
 @utility btn-primary {
   @apply btn bg-brand text-white hover:bg-brand-dark;
@@ -56,18 +62,33 @@ body {
 
 @keyframes lk-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 @keyframes lk-pop { 0% { transform: scale(0.6); } 70% { transform: scale(1.15); } 100% { transform: scale(1); } }
+@keyframes lk-grow { from { opacity: 0; transform: scale(0.92); } to { opacity: 1; transform: none; } }
 @keyframes lk-pulse-kf { 0% { box-shadow: 0 0 0 0 oklch(78.5% 0.164 78 / 0.55); } 100% { box-shadow: 0 0 0 16px oklch(78.5% 0.164 78 / 0); } }
-.lk-in { animation: lk-up 0.35s ease both; }
-.lk-pop { animation: lk-pop 0.3s ease; }
-.lk-lift { transition: transform 0.15s ease, box-shadow 0.15s ease; }
+/* UI motion stays under 300ms. */
+.lk-in { animation: lk-up 260ms var(--ease-out) both; }
+.lk-pop { animation: lk-pop 280ms var(--ease-spring); }
+/* Grows out of where it came from: set the origin with origin-bottom-left etc. */
+.lk-grow { animation: lk-grow 220ms var(--ease-out) both; }
+/* Lists arrive one after another (first 8 items, 40ms apart), not all at once. */
+.lk-stagger > :nth-child(2), .lk-stagger > :nth-child(2) > .lk-in { animation-delay: 40ms; }
+.lk-stagger > :nth-child(3), .lk-stagger > :nth-child(3) > .lk-in { animation-delay: 80ms; }
+.lk-stagger > :nth-child(4), .lk-stagger > :nth-child(4) > .lk-in { animation-delay: 120ms; }
+.lk-stagger > :nth-child(5), .lk-stagger > :nth-child(5) > .lk-in { animation-delay: 160ms; }
+.lk-stagger > :nth-child(6), .lk-stagger > :nth-child(6) > .lk-in { animation-delay: 200ms; }
+.lk-stagger > :nth-child(7), .lk-stagger > :nth-child(7) > .lk-in { animation-delay: 240ms; }
+.lk-stagger > :nth-child(n+8), .lk-stagger > :nth-child(n+8) > .lk-in { animation-delay: 280ms; }
+.lk-lift { transition: transform 150ms var(--ease-out), box-shadow 150ms var(--ease-out); }
 .lk-lift:hover { transform: translateY(-3px); box-shadow: 0 12px 24px oklch(22.2% 0.027 160 / 0.12); }
+.lk-lift:active { transform: translateY(-1px) scale(0.98); transition-duration: 80ms; }
 /* Icon swaps: the outgoing icon blurs as it fades. */
-.lk-swap { transition: opacity 0.2s ease, filter 0.2s ease, transform 0.2s ease; }
+.lk-swap { transition: opacity 200ms ease, filter 200ms ease, transform 240ms var(--ease-spring); }
 .lk-swap[data-on="false"] { opacity: 0; filter: blur(4px); transform: scale(0.7); }
 .lk-pulse { animation: lk-pulse-kf 1.6s ease-out infinite; }
 @media (prefers-reduced-motion: reduce) {
-  .lk-in, .lk-pop, .lk-pulse { animation: none; }
-  .lk-swap { transition: none; }
+  .lk-in, .lk-pop, .lk-grow, .lk-pulse { animation: none; }
+  .lk-swap, .lk-lift { transition: none; }
+  .btn, .btn-primary, .btn-ghost { transition: none; }
+  .btn:active, .btn-primary:active, .btn-ghost:active { transform: none; }
 }
 
 /* Welcome scenery */

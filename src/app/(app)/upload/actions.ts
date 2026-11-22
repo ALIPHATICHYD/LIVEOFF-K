@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getProfile } from "@/lib/auth";
-import { FACILITIES, PROPERTY_TYPES, nairaToKobo } from "@/lib/format";
+import { FACILITIES, PROPERTY_TYPES, nairaToKobo, RATE_LIMITED, isRateLimited } from "@/lib/format";
 import { createClient } from "@/lib/supabase/server";
 
 export type FormState = { error?: string };
@@ -78,6 +78,7 @@ export async function createListing(_prev: FormState, form: FormData): Promise<F
     address: d.address,
     facilities: d.facilities,
   }).select("id").single();
+  if (isRateLimited(error)) return { error: RATE_LIMITED };
   if (error || !data) return { error: "Could not save the listing. Try again." };
   redirect(`/upload/${data.id}`);
 }

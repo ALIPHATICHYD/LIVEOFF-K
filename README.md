@@ -29,6 +29,10 @@ To make yourself an admin, sign in once, then run in the SQL editor:
 update public.profiles set role = 'admin' where phone = '234XXXXXXXXXX';
 ```
 
+## Running it in production
+
+Error alerts, webhooks, background jobs, rate limits, spend alerts, rollback, backups: see [docs/OPERATIONS.md](docs/OPERATIONS.md).
+
 ## Let people try it (demo mode)
 
 Real log-in texts a code, which needs an SMS provider in Supabase (Auth → Sign In / Providers → Phone, e.g. Twilio or Termii). Until that is set up, testers can use the demo sign-in:

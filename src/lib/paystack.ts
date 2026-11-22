@@ -1,5 +1,6 @@
 import "server-only";
 import { createHmac, timingSafeEqual } from "node:crypto";
+import { sendAlert } from "./alert";
 import { createAdminClient } from "./supabase/admin";
 
 const API = "https://api.paystack.co";
@@ -44,18 +45,45 @@ export function isValidSignature(rawBody: string, signature: string | null) {
   return a.length === b.length && timingSafeEqual(a, b);
 }
 
+export type ChargeOutcome =
+  | "held" | "held_late" | "already_recorded" | "needs_refund" | "duplicate_charge"
+  | "amount_mismatch" | "ignored" | "unknown_reference";
+
 /**
- * Mark an escrow payment as held, but only if Paystack says it succeeded for the exact
- * amount we expect. Safe to call more than once (webhook and return page both call it).
+ * Record a Paystack charge. All checks run in one locked database function (record_paystack_charge),
+ * so the webhook and the return page can arrive together, Paystack can retry, and a payment made
+ * after the checkout expired is either honoured or flagged for a refund. Throws if the database
+ * can't be reached, so the webhook answers 500 and Paystack retries.
  */
-export async function markPaidIfValid(reference: string, paid: { status: string; amount: number; currency: string }) {
-  if (paid.status !== "success" || paid.currency !== "NGN") return false;
+export async function recordCharge(
+  reference: string,
+  paid: { status: string; amount: number; currency: string },
+  source: "webhook" | "return",
+): Promise<ChargeOutcome> {
   const admin = createAdminClient();
-  if (!admin) return false;
-  const { data: payment } = await admin.from("payments").select("id, status, total_kobo").eq("reference", reference).maybeSingle();
-  if (!payment || payment.status !== "pending" || Number(payment.total_kobo) !== paid.amount) return false;
-  const { error } = await admin.from("payments")
-    .update({ status: "held", paid_at: new Date().toISOString(), updated_at: new Date().toISOString() })
-    .eq("id", payment.id).eq("status", "pending");
-  return !error;
+  if (!admin) throw new Error("SUPABASE_SECRET_KEY is not set");
+  const { data, error } = await admin.rpc("record_paystack_charge", {
+    p_reference: reference, p_status: paid.status, p_amount: paid.amount, p_currency: paid.currency, p_source: source,
+  });
+  if (error) throw new Error(`record_paystack_charge failed: ${error.message}`);
+  const outcome = data as ChargeOutcome;
+  if (outcome === "needs_refund" || outcome === "duplicate_charge" || outcome === "amount_mismatch" || outcome === "unknown_reference") {
+    console.error(JSON.stringify({ level: "alert", msg: "payment needs staff review", reference, outcome, source }));
+    await sendAlert(`LiveOff-K payment ${reference} needs staff review: ${outcome}. Open /admin.`);
+  }
+  return outcome;
+}
+
+/**
+ * Send the student to Paystack. Each attempt gets its own reference ("<payment ref>-<suffix>"):
+ * Paystack refuses to reuse a reference, so a student who closed the checkout can try again.
+ */
+export async function startCheckout(payment: { id: string; reference: string; total_kobo: number | string }, email: string) {
+  const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  return initializeTransaction({
+    email,
+    amountKobo: Number(payment.total_kobo),
+    reference: `${payment.reference}-${Date.now().toString(36).toUpperCase()}`,
+    callbackUrl: `${site}/payments/${payment.id}`,
+  });
 }

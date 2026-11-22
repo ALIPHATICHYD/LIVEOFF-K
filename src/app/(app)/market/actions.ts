@@ -3,8 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { RATE_LIMITED, isRateLimited } from "@/lib/format";
 import { MARKET_CATEGORIES, MARKET_CONDITIONS } from "@/lib/market";
-import { initializeTransaction, isPaystackConfigured } from "@/lib/paystack";
+import { isPaystackConfigured, startCheckout } from "@/lib/paystack";
 import { createClient } from "@/lib/supabase/server";
 
 export type FormState = { ok?: boolean; error?: string };
@@ -64,6 +65,7 @@ export async function createItem(_prev: FormState, form: FormData): Promise<Form
     bundle_contents: d.bundle ? d.contents : [],
     original_value_kobo: d.bundle && d.was && d.was > d.price ? d.was * 100 : null,
   }).select("id").single();
+  if (isRateLimited(error)) return { error: RATE_LIMITED };
   if (error || !item) return { error: "Could not list this item. Try again." };
   revalidatePath("/market");
   redirect(`/market/${item.id}?new=1`);
@@ -90,15 +92,9 @@ export async function buyItem(_prev: FormState, form: FormData): Promise<FormSta
   if (payment.status !== "pending") redirect(`/payments/${payment.id}`);
   if (!isPaystackConfigured()) redirect(`/payments/${payment.id}?setup=1`);
 
-  const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   let url: string;
   try {
-    url = await initializeTransaction({
-      email: email.data,
-      amountKobo: Number(payment.total_kobo),
-      reference: payment.reference,
-      callbackUrl: `${site}/payments/${payment.id}`,
-    });
+    url = await startCheckout(payment, email.data);
   } catch {
     return { error: "Paystack is not responding. Try again in a minute." };
   }
@@ -119,6 +115,7 @@ export async function sendMeetRequest(_prev: FormState, form: FormData): Promise
   const { supabase, uid } = await signedIn(`/market/${itemId.data}`);
   const { error } = await supabase.from("market_requests").insert({ item_id: itemId.data, buyer_id: uid, ...parsed.data });
   if (error?.code === "23505") return { ok: true }; // already sent
+  if (isRateLimited(error)) return { error: RATE_LIMITED };
   if (error) return { error: "Could not send. The item may be reserved or sold." };
   return { ok: true };
 }
@@ -163,6 +160,7 @@ export async function postWanted(_prev: FormState, form: FormData): Promise<Form
     user_id: uid, university_id: uni.data, text: parsed.data.text,
     area_id: parsed.data.area || null, max_price_kobo: parsed.data.max ? parsed.data.max * 100 : null,
   });
+  if (isRateLimited(error)) return { error: RATE_LIMITED };
   if (error) return { error: "Could not post. Try again." };
   revalidatePath("/market");
   return { ok: true };
@@ -176,6 +174,7 @@ export async function makeOffer(_prev: FormState, form: FormData): Promise<FormS
   const { supabase, uid } = await signedIn("/market#wanted");
   const { error } = await supabase.from("market_offers").insert({ wanted_id: wantedId.data, seller_id: uid, ...parsed.data });
   if (error?.code === "23505") return { ok: true }; // already sent
+  if (isRateLimited(error)) return { error: RATE_LIMITED };
   if (error) return { error: "Could not send. You can't offer on your own request." };
   return { ok: true };
 }

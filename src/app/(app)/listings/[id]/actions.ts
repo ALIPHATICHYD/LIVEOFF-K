@@ -2,7 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { initializeTransaction, isPaystackConfigured } from "@/lib/paystack";
+import { RATE_LIMITED, isRateLimited } from "@/lib/format";
+import { isPaystackConfigured, startCheckout } from "@/lib/paystack";
 import { createClient } from "@/lib/supabase/server";
 
 export type BookState = { ok?: boolean; error?: string };
@@ -38,6 +39,7 @@ export async function bookInspection(_prev: BookState, form: FormData): Promise<
     requested_for: when.toISOString(),
     note: parsed.data.note ?? null,
   });
+  if (isRateLimited(error)) return { error: RATE_LIMITED };
   if (error) return { error: "Could not book this inspection. Try again." };
   return { ok: true };
 }
@@ -63,15 +65,9 @@ export async function payIntoEscrow(_prev: PayState, form: FormData): Promise<Pa
   if (payment.status !== "pending") redirect(`/payments/${payment.id}`);
   if (!isPaystackConfigured()) redirect(`/payments/${payment.id}?setup=1`);
 
-  const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
   let url: string;
   try {
-    url = await initializeTransaction({
-      email: email.data,
-      amountKobo: Number(payment.total_kobo),
-      reference: payment.reference,
-      callbackUrl: `${site}/payments/${payment.id}`,
-    });
+    url = await startCheckout(payment, email.data);
   } catch {
     return { error: "Paystack is not responding. Try again in a minute." };
   }

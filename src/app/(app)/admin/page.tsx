@@ -31,8 +31,8 @@ async function AdminPageContent() {
       .in("status", ["pending_review", "inspection_scheduled"]).order("created_at"),
     supabase.from("complaints").select("id, subject, details, status, is_suspicious_listing, listing_id, created_at")
       .in("status", ["open", "investigating"]).order("created_at", { ascending: false }).limit(20),
-    supabase.from("payments").select("id, reference, status, total_kobo, release_due_at, dispute_reason, listings(title), market_items(title)")
-      .in("status", ["held", "moved_in", "release_approved", "disputed"]).order("created_at"),
+    supabase.from("payments").select("id, reference, status, total_kobo, release_due_at, dispute_reason, needs_refund_at, review_note, listings(title), market_items(title)")
+      .or("status.in.(held,moved_in,release_approved,disputed),and(status.eq.cancelled,needs_refund_at.not.is.null)").order("created_at"),
     supabase.from("support_threads").select("id, subject, status, updated_at").in("status", ["open"]).order("updated_at").limit(30),
   ]);
   const escrow = escrowRes.data ?? [];
@@ -76,6 +76,7 @@ async function AdminPageContent() {
                 <span className="text-sm text-muted">{formatNaira(Number(p.total_kobo))} · {PAYMENT_STATUS[p.status]?.label}{due && " · 48h passed"} · {p.reference}</span>
               </div>
               {p.dispute_reason && <p className="text-sm text-danger">Dispute: {p.dispute_reason}</p>}
+              {p.review_note && <p className="text-sm text-danger">Check: {p.review_note}</p>}
               <div className="flex flex-wrap justify-end gap-2">
                 {releasable && (
                   <form action={markReleased} className="flex gap-2">
@@ -84,7 +85,7 @@ async function AdminPageContent() {
                     <button className="btn-primary h-9 text-sm">Mark paid to landlord</button>
                   </form>
                 )}
-                {["held", "moved_in", "disputed"].includes(p.status) && (
+                {(["held", "moved_in", "disputed"].includes(p.status) || (p.status === "cancelled" && p.needs_refund_at)) && (
                   <form action={markRefunded}><input type="hidden" name="paymentId" value={p.id} />
                     <button className="btn h-9 border border-danger-line bg-white text-sm text-danger">Mark refunded</button></form>
                 )}
